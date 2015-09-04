@@ -6,6 +6,11 @@ This paper's discussion of the semiotics of Hawaiian drinks is very different fr
 
 It almost goes without saying that the paper's user study was biased by the inebriation of the authors. But I actually believe the main observations are sound, and would withstand closer investigation.  My main question is not around validity, but  context -- if we shifted from Hawaiian drinks to Alaskan drinks, would the assumptions of the paper hold?  Is there an analogously soft Arctic mixer that plays the role of pineapple -- maybe the butter in a Hot Buttered Rum?  If I had to guess, I'd say that the lessons of this paper may well be limited to tropical climes.
 
+### Erik Krogen
+
+While there are some interesting takeaways in the paper about machine learning, I will focus on those which are more relevant to our course. The first is obviously the flexibility of the append-only EventHistory from the development point of view, making it very easy for data scientists to perform test runs on real data. One thing that stands out to me throughout their software engineering notes is the care they put into optimizing everything to work quickly and efficiently on a single machine to remove the necessity for cross-machine synchronization, which combined with replicas provide high availability.  
+
+One open question I see pretty clearly remaining is just how large this can scale. Working at 10 million users is great, and will be sufficient for most businesses, but I imagine that at e.g. Twitter scale a single server would no longer be enough to handle the incoming traffic. It does seem that the ideas presented in the paper should still be applicable even if the online processing overloaded a single server and required the use of a distributed system. One thing I am curious about is how far back they are able to store events in the EventHistory repository. It seems that this repository must grow in size quite quickly, and I doubt that it would be able to serve events quickly enough if it was also able to serve arbitrarily old data. 
 
 ### K. Shankari
 #### Overview
