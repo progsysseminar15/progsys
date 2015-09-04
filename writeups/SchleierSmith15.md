@@ -5,3 +5,47 @@
 This paper's discussion of the semiotics of Hawaiian drinks is very different from the way we usually think about tropical beverages.  I particularly was struck by their meta-analysis of the self-negating blend of "hard" liquor and "pulpy" fruit. I wonder if this has implications for the hard-drinking heroes of pulp fiction.  Maybe we can apply this to Dashiell Hammett -- either to generate authentic posthumous texts, or to synthesize publishable academic analyses based on the extant texts.  If anybody would like to discuss these ideas for a course project come find me.
 
 It almost goes without saying that the paper's user study was biased by the inebriation of the authors. But I actually believe the main observations are sound, and would withstand closer investigation.  My main question is not around validity, but  context -- if we shifted from Hawaiian drinks to Alaskan drinks, would the assumptions of the paper hold?  Is there an analogously soft Arctic mixer that plays the role of pineapple -- maybe the butter in a Hot Buttered Rum?  If I had to guess, I'd say that the lessons of this paper may well be limited to tropical climes.
+
+
+### K. Shankari
+#### Overview
+This paper presents a practical view, motivated by a real-world example, of
+agile data modelling. I found it interesting to read a discussion of the system
+building around a machine learning framework that did not focus on either the
+machine learning algorithms, or the execution framework, but on the process for
+building models.
+
+#### Strengths
+- The insights are based on a real-world system.
+- The notion of collecting large amounts of read-only data in an event stream
+  and running analyses on it, while fairly intuitive, has not been explored and
+  evaluated prior to this.
+- It is challenging to come up with metrics for such vague concepts as
+  *agility* or *ease of use*, although they are very real barriers to adoption.
+  The paper attempts to quantify metrics that could be used to study this in the future.
+- The system takes into account that external *lookup* state can be modified,
+  and explicitly captures this through *fact change events*. It was helpful as
+  a reminder that the state of the system includes external dependencies, and
+  in order to roll the world back, these dependencies need to be captured and
+  logged in the event stream as well.
+
+#### Weaknesses
+I would have liked to see more discussion of the following topics:
+- Versioning: The system described here works as long as all your data is in
+  the same format. But what if you change the format of your data, possibly by
+  collecting different information?
+- Given the strong focus on consistent modelling between exploratory evaluation and
+  production code, it is not clear why you chose two different programming
+  languages for the two parts? Surely, using a langugage such as python that
+  supports both ongoing development and modelling would allow you to unify the
+  two parts even further.
+- Some terms are loosely defined and explained. For example, what is training
+  recommendation and how does it help?
+- While the evaluation section is a laudable attempt for an engineering-focused
+  paper, it is a bit primitive by academic standards. For example, do you know
+  that the increase in matchers and voters is not just due to increase in your
+  user base? Also, while Jul-Nov 2013 shows frequent model updates correlated
+  with more voters and matchers, Nov 2013 - Feb 2014 shows an increase that is
+  not correlated with model updates, and Feb - Apr 2014 shows updates that are
+  not correlated with an increase. It would be good to provide some more
+  insights into these changes.
