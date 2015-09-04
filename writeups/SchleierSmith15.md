@@ -85,3 +85,21 @@ or cache intermediate results of iterative model training that can reduce comput
 time? To reduce memory pressure for larger feature sets and larger data sets, how
 can knowledge of the problem help drive cache management of the event log?
 
+### Xinghao Pan
+
+My main takeaway from this paper is that we should work with event histories rather than snapshots in an Agile environment.
+The advantages conferred by using event histories seem to boil down to two reasons.
+Firstly, event histories can provide us with a more complete picture than snapshots, in the sense that it is always possible to recover any snapshot from the event history, but the converse is not possible.
+This allows developers to go back in time to generate new features, training data, and basically conduct any analysis on any slice in the past.
+Secondly, event histories are the natural representation of the 4-dimensional world.
+Models, algorithms, or any other code should not be made to work with static states that are artifically defined by the developer who recorded the snapshot.
+This is particularly important in an Agile environment where code should be as plugable-and-playable as possible, since redefining state and all the code written around it requires a long deployment cycle.
+
+Essentially, all the complexity has been avoided by having an event history repository that allows everyone to agree on the state of the world at any point in history.
+Therein lies the crux of the matter -- the repository becomes the critical component through which everything else works.
+It needs to be highly efficient under peak loads of requests to read and write events.
+It was also not clear from the paper, I think, if the repository is parallel / distributed. (I assume that it must be, for it to be scalable.)
+If so, how do the threads coordinate to agree on a common event ordering?
+Is there any built-in resiliency / durability?
+Engineering a scalable, robust event log should be the key focus of research.
+(There might be some relation to Calvin's deterministic database -- all operations are easy once an order is agreed.)
