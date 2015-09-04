@@ -59,3 +59,29 @@ I would have liked to see more discussion of the following topics:
 Event history architecture is good for agile machine learning in real-time applications. The main reason is that it allows rapid experiment cycles by letting the developers jump back to any frame of history, train the model with new features, and test the effectiveness of new ideas by applying the trained model to the present events. Since the feature definitions and state management software are same in development and production, it releases the burden from the developers by letting them write one piece of code that fits for both production and development. Because of the reduced software engineering overhead, the abstraction makes it easier for multiple data scientists to merge their efforts and improve the model concurrently. Another interesting lesson is that devising interesting features might be more important than choosing the ‘right’ machine learning algorithms and parameters. Because of the low latency requirement for real-time applications, a good feature must also be quickly accessible.
 
 Under the event history architecture, it would be interesting to see how the length of training intervals will affect the model’s prediction performance. Also, since developers can jump back to any frame of history, how do we know the optimal point that will give us the most promising model for predicting the future? Furthermore, now it seems that all the events are included in a single time interval and trained together. Does it make sense to split events into groups by certain characteristics (location, age, …), project each group of events to a different time interval and train each group separately?
+
+### Gabe Fierro
+
+Machine learning models take a long time to develop and push into production
+for evaluation. An iterative approach ("agile" programming) is desired, but
+rapid development is complicated by the lack of a uniform framework for running
+models on historical data and then migrating implementations to real-time data
+in production.  The paper presents an architecture for storing input data as a
+time-ordered event history, which can then be treated as a playback log for
+real-time testing or as point-in-time feature state for static model formation
+("back-testing"). By providing the same API and semantics for creating models
+in both testing/exploration and production, the feedback loop is optimized for
+iterative development. Uniform representation of real-time and historical data.
+Uniform access method because now everything is in the log.
+
+How do models scale with larger features? Is a packed in-memory representation
+still appropriate?  What happens when new features are introduced -- is there a
+feedback mechanism to establish when a feature was introduced/decomissioned?
+The paper asserts that handling >10k updates per second across 100+ features is
+not resource intensive and obviates the need for distributed architectures, but
+how would this work when scaled to 100million or 1 billion users or more update
+requests? Are there heuristics that can be applied to reduce the number of computations
+or cache intermediate results of iterative model training that can reduce computation
+time? To reduce memory pressure for larger feature sets and larger data sets, how
+can knowledge of the problem help drive cache management of the event log?
+
