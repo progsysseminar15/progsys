@@ -1,5 +1,5 @@
 # An Architecture for Agile Machine Learning in Real-Time Applications
-## Johann Schleier-Smith.  
+## Johann Schleier-Smith.
 
 ### Jane Student (example)
 This paper's discussion of the semiotics of Hawaiian drinks is very different from the way we usually think about tropical beverages.  I particularly was struck by their meta-analysis of the self-negating blend of "hard" liquor and "pulpy" fruit. I wonder if this has implications for the hard-drinking heroes of pulp fiction.  Maybe we can apply this to Dashiell Hammett -- either to generate authentic posthumous texts, or to synthesize publishable academic analyses based on the extant texts.  If anybody would like to discuss these ideas for a course project come find me.
@@ -8,9 +8,9 @@ It almost goes without saying that the paper's user study was biased by the ineb
 
 ### Erik Krogen
 
-While there are some interesting takeaways in the paper about machine learning, I will focus on those which are more relevant to our course. The first is obviously the flexibility of the append-only EventHistory from the development point of view, making it very easy for data scientists to perform test runs on real data. One thing that stands out to me throughout their software engineering notes is the care they put into optimizing everything to work quickly and efficiently on a single machine to remove the necessity for cross-machine synchronization, which combined with replicas provide high availability.  
+While there are some interesting takeaways in the paper about machine learning, I will focus on those which are more relevant to our course. The first is obviously the flexibility of the append-only EventHistory from the development point of view, making it very easy for data scientists to perform test runs on real data. One thing that stands out to me throughout their software engineering notes is the care they put into optimizing everything to work quickly and efficiently on a single machine to remove the necessity for cross-machine synchronization, which combined with replicas provide high availability.
 
-One open question I see pretty clearly remaining is just how large this can scale. Working at 10 million users is great, and will be sufficient for most businesses, but I imagine that at e.g. Twitter scale a single server would no longer be enough to handle the incoming traffic. It does seem that the ideas presented in the paper should still be applicable even if the online processing overloaded a single server and required the use of a distributed system. One thing I am curious about is how far back they are able to store events in the EventHistory repository. It seems that this repository must grow in size quite quickly, and I doubt that it would be able to serve events quickly enough if it was also able to serve arbitrarily old data. 
+One open question I see pretty clearly remaining is just how large this can scale. Working at 10 million users is great, and will be sufficient for most businesses, but I imagine that at e.g. Twitter scale a single server would no longer be enough to handle the incoming traffic. It does seem that the ideas presented in the paper should still be applicable even if the online processing overloaded a single server and required the use of a distributed system. One thing I am curious about is how far back they are able to store events in the EventHistory repository. It seems that this repository must grow in size quite quickly, and I doubt that it would be able to serve events quickly enough if it was also able to serve arbitrarily old data.
 
 ### K. Shankari
 #### Overview
@@ -103,3 +103,26 @@ If so, how do the threads coordinate to agree on a common event ordering?
 Is there any built-in resiliency / durability?
 Engineering a scalable, robust event log should be the key focus of research.
 (There might be some relation to Calvin's deterministic database -- all operations are easy once an order is agreed.)
+
+
+### Yifan Wu
+Questions:
+- To record all events and feed that into the ML model seems very applicable for the specific dating
+case, and it would be nice to see how much it generalizes.
+- It seems that the model fits very well with logic programming where data, depending on the switch is
+automatically pump thru different channels.
+- I wasn’t sure why the event history log makes the iteration faster, I think the key is to have a
+good interface with data such that when the algorithm changes nothing else need to change (thus the
+data decision is directly modified to yield results). It happens that the desired probability is the
+product of a few conditional probabilities that are outputs of ML algorithms, so it’s a fairly clean
+interface.
+- What causes the traditional ML system to be so slow? It’s just a matter of updating the
+  parameters?
+    * “eliminating batch processing can make a problem easier to reason about” — elaborate?
+    * If a work is difficult to reproduce doesn’t that mean the model is overfitting anyways and not
+      desirable?
+- Should there be a separation between training and deployment?
+- This seem like a common need among a lot of internet startups — it would be fantastic to get
+  an overview/sense of how every one else does this.
+    * Is this view of events new? It seems that the ability to play back history is new-ish
+    * A lot of companies already use shadow traffic to implement testing, which is a bit similar
