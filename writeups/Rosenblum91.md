@@ -1,0 +1,7 @@
+# The Design and Implementation of a Log-Structured File System
+## Mendel Rosenblum and John K. Ousterhout
+
+### Johann Schleier-Smith
+Perhaps the most interesting content in this work, and that which remains relevant today, involves the approach to reclaiming space. A log-structured filesystem writes to large contiguous regions, termed "segments," and in the presence of updates and deletes requires a cleaning policy in order to consolidate live data and create free segments. The authors use simple heuristics throughout but their first attempts perform surprisingly poorly. The critical insight is a cost-benefit calculation which pushes more recently modified segments to be reclaimed later. In the authors' words, "stability can be estimated by the age of the data," and they find that consolidating stable data produces full segments that are likely to remain stable. I enjoyed this paper's emphasis on simple modeling and straightforward rules in design of practical system.
+
+One potential capability of log-structured filesystems that the authors do not explore is the potential to go back in time, perhaps to recover accidentally lost data, or for audit purposes. It this objective likely conflicts with the performance optimizations described in the paper, though another set of techniques, likely including compression, could be called upon. I am also interested in understanding more about how this work relates to garbage collectors for programming languages, especially because modern flash sits in-between disks and memory in regard to random access speed.

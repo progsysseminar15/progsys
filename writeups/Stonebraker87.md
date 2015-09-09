@@ -1,0 +1,10 @@
+# The Design of the Postgres Storage System
+## Michael Stonebraker
+
+### Johann Schleier-Smith
+
+Reading this paper really feels like time travel&mdash;the introduction references to WORM media and makes the assumption that non-volatile main memory will be common, while the SQL dialect bears unfamiliar syntax and offers a little window into how things might have turned out differently. Of course, Postgres has become a highly successful technology, and key trends identified by this early paper regarding the performance of CPUs, the development of multi-processor systems, and the gating nature of disk io all ring true today. This paper contains quite a lot of implementation specifics, discussing in depth the bits used to encode the row format, calculating the space used by index structures, and describing the use of R-trees to make temporal queries efficient. These tidbits not only help make the work concrete, but could be just as useful in an implementation today. For me the main takeaways are in the details, rather than in the theme of the paper.
+
+While Postgres is used widely today, the temporal query capabilities that so influenced the design of its storage system have faded to obscurity. I am curious to better understand why that is. Were efficient implementations actually developed? Was storage too expensive to permit retaining full history? Did developers prefer to express history explicitly in the schema? Did the query language provide a natural way to ask the questions that users cared about (say analyzing changes through time rather than analyzing snapshots)? Was the approach compatible with the separation between the operational data store and the data mart, and with the ETL process linking the two? Did reorganizing the data to star schema or other formats provide better flexibility and performance?
+
+The Postgres design paper contains a very compelling notion: that time should be integral to our idea of a database. Understanding how this motivation played out in practice is of great interest to me.
