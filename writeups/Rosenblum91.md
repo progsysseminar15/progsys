@@ -112,3 +112,37 @@ systems such as Ceph and "fusion drives" (combinations of SSD and spinning
 metal) are already used to keep hot data in fast read/write locations. I wonder
 if the authors' insights regarding treating hot/cold segments differently could
 be extended to put hot segments in SSDs.
+
+### K. Shankari
+#### Overview
+This paper describes a file system structure that is optimized to use the disk
+efficiently for small writes. It does so by always appending writes to the end
+of a "log". It uses a combination of threading (index across segments of the
+file) and compaction (make the segments contiguous) in order to deal with
+segmented files. One would expect that this would work for large sequential
+reads too, specially after the compaction has run, but there are already
+techniques for sequential accesses to large files.
+
+It would be interesting to explore what would happen if you never deleted data
+from the disk. Would that eliminate the need for threading and compaction? It
+does not appear to be the case because you might still want to append to
+existing files, which would cause the file to be segmented and require
+threading. It might even make it harder, because if there are no holes, we
+cannot compact the data to be contiguous again.
+
+A naive but wildly inefficient technique to overcome that would be to write a
+new copy of the entire file every time that it was appended. But even with
+assuming infinite, no-cost storage, that would force you to read the file
+before appending to it, which will make appends to large files inefficient. The
+other option is to have a very efficient index and just always thread the
+files. This is the equivalent of logging by timestamp in a database. The index
+would need to be distributed in order to support distributing the load
+physically. That must be what the current sharded databases do. I wonder how
+efficient they are with small read/writes versus large ones. Theoretically, the
+SQL databases avoid this by segmenting the data even further so that all
+accesses are small ones (one row at a time), so that the workload is more
+predictable.
+
+But that might not be true any more with support for CLOBs and with NoSQL
+databases. It would be interesting to look up the performance metrics of those
+databases.

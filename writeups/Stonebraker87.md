@@ -118,3 +118,26 @@ timestamp ordering mechanism to maintain consistency in the order of
 transactions.  I would like to see how other this and other log-based database
 systems have handled the question of ordering in a log when distributing a
 database. 
+
+### K. Shankari
+#### Overview
+This paper describes a database system that attempts to solve the problem of
+crash recovery management by eliminating it. It does so by never overwriting
+data - all updates are turned into inserts. It deals with segmentation by
+utilizing the database index to support some form of threading, and also
+compacts while writing historical records to offline storage.
+
+Transactions are initialized by advancing a counter to create the XID. If this
+needs to be strictly monotonically increasing, it would imply a synchronization
+point. Need to modify transaction state (e.g. from "in progress" to
+"committed"). Even with storing everything, might want to compress for
+performance, e.g. bloom filter. Requires user to specify access patterns -
+similar to "hot" and "cold" files, relations need to specify how they will
+access archival data.
+
+A key notion is that of validity - each version of a record is valid from the
+time that it is written to the time that the next version is written. Should
+versioning be exposed or should it be under the covers?
+
+Comparing the compaction strategy with LFS, the primary difference is really in
+the B-tree index. 
