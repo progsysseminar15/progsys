@@ -86,3 +86,29 @@ An advantage of LFS that still holds today, I think, is that recovery is simplif
 This is something that we see in Spark too -- as long as the lineage (log of actions) is retained, all 
 
 Most importantly, I think we need to understand LFS in its historical context, including whether it was successful, and why?
+
+### Gabe Fierro
+
+One of the key takeaways of this paper is the authors' use of "append-only"
+indirection methods to avoid synchronizing state between multiple parts of the
+file system as well to minimize access between the multiple tables needed to
+manage file metadata. There are several places where this concept turns up:
+* using version numbers inside the inode map to avoid having to access an inode
+  (or worse an indirection block) to determine whether or not a file block is
+  live
+* the use of an inode map as a layer of indirection to find inodes. This does
+  away with the simple FFS method of having a static inode location -- which
+  simplifies implementation but adds disk accesses -- and by being written to
+  the log, it stays in line with the idea of sequential writes. It does not
+  require the disk to "go back" and edit a single entry in a known table
+  lcation, which increases the number of seeks
+
+The authors use the benefit of large main memory to subsidize the cost of the
+tables they have to get around the usual sequential seek that is necessary for
+reading logs. While the authors offhandedly mention NVRAM as a way to provide
+crash protection, the increasing ubiquity and decreasing cost of SSDs raises
+the question of a "triple-tier" log-structured file system. Distributed file
+systems such as Ceph and "fusion drives" (combinations of SSD and spinning
+metal) are already used to keep hot data in fast read/write locations. I wonder
+if the authors' insights regarding treating hot/cold segments differently could
+be extended to put hot segments in SSDs.
