@@ -27,3 +27,9 @@ they don't take it to quite the extreme approach proposed in this paper.  My
 second question is, does any of this matter on SSDs?  Seeks are free, so the
 performance benefit isn't there.  It's not clear to me if this transaction log
 is fundamentally better given this fact.
+
+### Chenggang Wu
+The paper presents log-structured file system where all the modifications are written sequentially onto the disk in a log-like structure. The authors explained how to write new files and change existing files without modifying existing blocks using inode and imap. More importantly, they proposed a storage reclamation mechanism that is somewhat similar to the main memory garbage collector. The major difference is that for disk storage, since we want to minimize the latency overhead produced by seeks, we need to copy sparse live blocks to a new region to reduce the fragmentation. This will make more continuous free blocks available for a sequential write.
+
+In the future, however, the use of NVM will probably be more and more prevalent. NVM provides persistent storage as disk does, but it is also byte-addressable and supports random-access with DRAM-like performance. Therefore, sequential writes are no-longer necessary and we only need to find available memory space. Based on the same reason, the copying during the storage reclamation also seems unnecessary. It would be interesting to know what additional complexities may incur using NVM with this storage mechanism.
+
