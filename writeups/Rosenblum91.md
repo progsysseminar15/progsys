@@ -7,9 +7,9 @@ Perhaps the most interesting content in this work, and that which remains releva
 One potential capability of log-structured filesystems that the authors do not explore is the potential to go back in time, perhaps to recover accidentally lost data, or for audit purposes. It this objective likely conflicts with the performance optimizations described in the paper, though another set of techniques, likely including compression, could be called upon. I am also interested in understanding more about how this work relates to garbage collectors for programming languages, especially because modern flash sits in-between disks and memory in regard to random access speed.
 
 ### Erik Krogen
-A big highlight was the segment cleaning mechanism, not surprising since a very large part of the paper was devoted to this process. Coming into the paper I was expecting reading the data to be the hard part, but it became quickly clear that a bit of indexing solved this problem without any issues and fairly low complexity. I've learned in previous classes that file systems have very strong bimodal distributions in two areas: a ton of very small files and a few large files that end up taking up most of the space; and a few files that are accessed very frequently and lots of files that are almost never accessed. Their usage study perfectly mirrors this, and it's amazing how well their cost-benefit model manages to capture this - the bimodal segment distribution plot they show is inspiring in how perfect it is. 
+A big highlight was the segment cleaning mechanism, not surprising since a very large part of the paper was devoted to this process. Coming into the paper I was expecting reading the data to be the hard part, but it became quickly clear that a bit of indexing solved this problem without any issues and fairly low complexity. I've learned in previous classes that file systems have very strong bimodal distributions in two areas: a ton of very small files and a few large files that end up taking up most of the space; and a few files that are accessed very frequently and lots of files that are almost never accessed. Their usage study perfectly mirrors this, and it's amazing how well their cost-benefit model manages to capture this - the bimodal segment distribution plot they show is inspiring in how perfect it is.
 
-One big question that remains for me: why didn't this ever take off? I'm not familiar with any file system that uses this approach that is used today, although COW systems like ZFS have some of the same ideas, though AFAIK without the sequential write optimization (which won't make nearly as much of a difference now that most things are moving to SSD). I will say that I always view a system with a garbage collection-type daemon with some healthy skepticism, but the results they reported are very promising. I wonder if there's a way to do something like this without the requirement for a background daemon--we've already seen it in both POSTGRES and Sprite LFS, so it seems to be a common theme. Could a file system like this be really useful on HDFS data nodes? HDFS has an append-only model, so it seems that it would be a perfect fit. 
+One big question that remains for me: why didn't this ever take off? I'm not familiar with any file system that uses this approach that is used today, although COW systems like ZFS have some of the same ideas, though AFAIK without the sequential write optimization (which won't make nearly as much of a difference now that most things are moving to SSD). I will say that I always view a system with a garbage collection-type daemon with some healthy skepticism, but the results they reported are very promising. I wonder if there's a way to do something like this without the requirement for a background daemon--we've already seen it in both POSTGRES and Sprite LFS, so it seems to be a common theme. Could a file system like this be really useful on HDFS data nodes? HDFS has an append-only model, so it seems that it would be a perfect fit.
 
 ### Ethan J. Jackson
 This is a really cool paper.  They realized that traditional file systems were
@@ -33,3 +33,20 @@ The paper presents log-structured file system where all the modifications are wr
 
 In the future, however, the use of NVM will probably be more and more prevalent. NVM provides persistent storage as disk does, but it is also byte-addressable and supports random-access with DRAM-like performance. Therefore, sequential writes are no-longer necessary and we only need to find available memory space. Based on the same reason, the copying during the storage reclamation also seems unnecessary. It would be interesting to know what additional complexities may incur using NVM with this storage mechanism.
 
+### Yifan Wu
+
+LFS took advantage of bigger disk bandwidth and larger main memories (buffering updates), and deals
+with FFS’ latency due to seeks and synchronous writes to metadata. LFS appends to a single log
+(disk), that way avoiding seeking (since it’s updated to the end of the log). The major challenges
+with this method is memory fragmentation and locating the most recent data. Finding data is solved
+by inode maps and segment summary (yay levels of indirection!), which conveniently is cached in
+memory.
+
+One big problem is cleaning, which has a high overhead. Another reason for why journaling file
+system may have been more popular could be the simplicity of JFS in general. Though LFS had a big
+memory advantage which should more important back then.
+
+In terms of the relevance for today, though the spread of NVM makes seek time more irrelevant, the
+side benefit of appending to the end is helpful for coordination/concurrency control in a distributed setting.
+
+As for my question, it would be great to talk about what people truly cared about when choosing FSs.
