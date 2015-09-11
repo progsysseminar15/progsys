@@ -50,3 +50,39 @@ In terms of the relevance for today, though the spread of NVM makes seek time mo
 side benefit of appending to the end is helpful for coordination/concurrency control in a distributed setting.
 
 As for my question, it would be great to talk about what people truly cared about when choosing FSs.
+
+### Xinghao Pan
+
+The Sprite LFS is a log-structured file system that places the log front and center as the truth of the system.
+It was developed in a technological setting where
+- Processors are getting faster at exponential rate,
+- Disk is getting cheaper but speed is not increasing as quickly as processors,
+- Main memory is getting larger, which helps to serve more read requests without disk access, and to buffer more writes before going to disk.
+- Workload is dominated by many accesses to small files.
+
+Under this setting, the authors claim that LFS has the following advantages:
+- Write throughput is improved by sequential access, thus reducing seeks,
+- Files are cached in memory and most reads are satisfied by the memory,
+- Simpler recovery process via checkpoint and roll-forward.
+
+There are a couple of difficulties in implementing a log-structured FS that the authors acknowledge.
+Firstly, files need to be quickly located and read from disk without needing to scan the entire log.
+This is largely dealt with by keeping the inode indexing of Unix FFS, and by keeping the inode map in memory so as to reduce seeks.
+Secondly, fragmentation may become a problem as files are deleted and overwritten.
+LFS handles this through a combination of threading, compacting, and segment cleaning.
+
+The technological setting today has changed since the 90's, which should prompt a re-think of the log-structured FS approach.
+Processor clock speeds are no longer increasing exponentially, but we are better able to take advantage of parallelism through multicore technology.
+Both magnetic disks and SSDs are now cheaper and highly elastic.
+Recent developments, e.g. Spark, have exploited main memory on distributed machines.
+How do these developments change the way we would implement LFS today?
+(Should we increase the write buffer size, and effectively serve all reads and write from the main memory, and archiving to HDFS infrequently?)
+Are the advantages and disadvantages of LFS still valid today?
+
+In particular, the paper does not address how LFS should manage multiple processors reading / writing.
+Related to this issue is how we can support transactional semantics (ACID) on top of LFS
+
+An advantage of LFS that still holds today, I think, is that recovery is simplified.
+This is something that we see in Spark too -- as long as the lineage (log of actions) is retained, all 
+
+Most importantly, I think we need to understand LFS in its historical context, including whether it was successful, and why?
