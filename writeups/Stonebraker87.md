@@ -12,7 +12,7 @@ The Postgres design paper contains a very compelling notion: that time should be
 ### Erik Krogen
 One of the biggest points made is simply that we can provide the same consistency guarantees as WAL systems with enormously less complexity (compare to ARIES). However, we provide this at the tradeoff of increased storage cost, and a vacuum daemon overhead (which they argue is negligible, but I am not entirely convinced). The overall concept of keeping all data is fascinating, and something we discussed at length during our last meeting, so it was interesting to see it presented in a more formal manner. One thing we hadn't considered was the possibility of moving to archive, since storage these days is so many cheaper/larger than what they were dealing with at the time the paper was written.
 
-I think an open question is whether a system like this (which didn't really take off at the time, and even the authors admitted may not have been the best idea) could work better in today's environment of extremely cheap storage. HDFS is perfectly suited for append-only and has hugely scalable storage. It could be interesting to use local SSDs for fast storage, then HDFS as an archive - HDFS is essentially WORM so many of the techniques discussed here could possibly be useful. 
+I think an open question is whether a system like this (which didn't really take off at the time, and even the authors admitted may not have been the best idea) could work better in today's environment of extremely cheap storage. HDFS is perfectly suited for append-only and has hugely scalable storage. It could be interesting to use local SSDs for fast storage, then HDFS as an archive - HDFS is essentially WORM so many of the techniques discussed here could possibly be useful.
 
 ### Ethan J. Jackson
 This paper is an excellent example of a system which trades efficiency for
@@ -34,4 +34,40 @@ over since the writing of the original paper.
 This paper presents the design of Postgres, a no-overwrite storage system. Perhaps the biggest feature that distinguishes Postgres from other storage system is that the records are append-only and monotonically accumulated over time. Because of this, Postgres is able to store the current state as well as the historical states at any point of time, and there is no need to use write ahead log. This feature makes the recovery almost instantaneous since the system does not have to roll back to retrieve the historical state from the current state. Moreover, incorporating time as an extra field allows users to query certain historical state (or a sequence of states). However, since the amount of data being stored is constantly increasing, sequential scan becomes too costly and therefore Postgres requires clever indexing mechanisms. Due to the hardware constraints 30 years ago, Postgres uses ordinary disks to store the current state and optical disks to store the historical state. The paper introduces in detail the mechanism for vacuuming the magnetic disks, shipping data to the archival disks, and low-level implementation of R-tree indexes for archived records.
 
 Our storage devices, however, have changed dramatically over the 30 years. For example, 3dxpoint allows persistent data storage while providing comparable access speed to DRAM. As these devices become cheaper, we can probably make assumption that all data can fit into NVM in the near future. With that in mind, what would be the changes in system’s architecture and indexing structures for the next-generation no-overwrite DBMS? Given the progressive nature of the system, how can the performance of the system be improved (without sacrificing the integrity) if implemented in monotonic programming languages such as Bloom?
+
+
+### Yifan Wu
+Postgres was a revolutionary DB system that helped popularize SQL, and overcame a lot of the
+complexities of achieving the theoretical benefits. The paper comprehensively covered the goals,
+designs (archive and index), and performance. In the context of the class, the paper offers
+historical perspective on what has changed and what has stayed in the DB evolution in the past
+couple decades.
+
+First, it’s clearly a progressive system in the sense that no data is every overwritten. This key
+notion makes the recovery mechanism appears simpler than ARIES. Today we see a lot of DB’s
+(especially the NoSQL suite) like this to avoid complex concurrency issues. More broadly, this
+progressive notion seem to be very versatile, serving different purposes with different use
+patterns.
+
+Although archival system is logically very clean and have good crash behavior, but seemed a costly
+process. This would not scale with today’s replicas and it wasn’t clear to me if the paper addressed
+this issue (distributed DB system and replicas were mentioned on page 4).
+Besides the notion of logging history, there are a few other interesting comparisons with today’s DB
+world:
+
+- The hardware has clearly evolved, we now used non-volatile memory extensively, and CPU
+instructions are becoming more of a resource (not just I/O).
+
+- Its concurrency control back then seemed simple (and don’t need atomic clocks plus Paxos), and
+it’s unclear if the Tmin/Tmax is robust against different machine times.
+
+- The use of UNIX’s file system instead of directly managing its own buffer pools, which is in
+contrast to the recent research trend to reduce the OS overhead for DB performances.
+
+- Neat tricks like bloom filter is also very effective to deal with memory constraints, which
+  still is a relevant technique today. This is because despite bigger and faster memory, there
+  is still a memory hierarchy.
+
+
+
 
