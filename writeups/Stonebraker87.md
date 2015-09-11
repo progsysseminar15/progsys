@@ -70,4 +70,27 @@ contrast to the recent research trend to reduce the OS overhead for DB performan
 
 
 
+### Xinghao Pan
 
+POSTGRES is an early database system that is built on the idea that no data is ever overwritten, by simply treating all updates as insertions.
+Concurrency control is achieved by a simple two-phase locking protocol.
+Durability / recovery is provided by replicated mirrors of the database, thereby obviating the need for complicated recovery code.
+In addition, since every version of every record is never discarded, it is possible to perform historical queries, something that is typically not supported in modern databases.
+
+POSTGRES also has a hierarchical storage system, where older versions of records are ``vacuumed'' onto write-once-read-many storage stystems.
+It is important to note that this is possible to implement and perform cheaply because of the no-overwrite nature of the database.
+I also find it interesting that the hierarchical storage fits naturally into the modern day model of storage (main memory, SSDs, magnetic disks on HDFS).
+
+The description of concurrency control and recovery seem to be overly simple.
+For example, it is not clear how asychronous processes (potentially on different machines) can consistently agree on timestamps, or on transaction IDs without it becoming a bottleneck.
+I also wonder if other concurrency control mechanisms, such as MVCC, could be a more natural fit and perform better.
+Achieving consistency across database replicas is also a non-trivial problem, since the execution needs to be not only serializable but also deterministic, which I feel was not sufficiently addressed in the paper.
+(Perhaps the Calvin work would address this?)
+Having multiple mirrors also increases the storage cost which is already significant in a never-overwrite system.
+
+It is also interesting to contrast POSTGRES with Sprite LFS.
+In POSTGRES, the logging approach was a solution to simplifying recovery, concurrency control, and archiving;
+LFS uses logging to improve write throughput.
+POSTGRES is strictly no-overwrite; LFS cleans up overwritten and deleted files.
+Both POSTGRES and LFS have some form of hierarchical storage, be it between magnetic disk and optical medium (POSTGRES) or main memory and disk (LFS).
+Both also address the issue of fast retrieval of information through some index.
