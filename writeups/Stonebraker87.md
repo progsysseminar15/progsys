@@ -94,3 +94,27 @@ LFS uses logging to improve write throughput.
 POSTGRES is strictly no-overwrite; LFS cleans up overwritten and deleted files.
 Both POSTGRES and LFS have some form of hierarchical storage, be it between magnetic disk and optical medium (POSTGRES) or main memory and disk (LFS).
 Both also address the issue of fast retrieval of information through some index.
+
+### Gabe Fierro
+
+What was most interesting to me in reading this paper were the assumptions made
+about the host operating systems for Postgres; the paper explicitly mentions
+that the operations around time management are CPU intensive and are presumed
+to be handled by increasing speed of CPUs. Also, Postgres assumes (like Sprite
+LFS) that a surplus of main memory will assist in reducing the number of costly
+I/O operations for accessing transactions within the log.  Postgres also
+amortizes expensive operations by turning them into writes against the log for a record
+whenever possible. This means that optimizing the "hot path" around the records benefits
+the wide array of features offered by Postgres and ultimately simplifies its design
+
+This construction of a no-overwrite database that provides queries over the
+history of transactions for a record requires concurrency control and timestamp
+management, which Postgres is able to manage by only updating the time of the
+latest transaction when the actual update logically takes place. It isn't clear
+reading the paper how this mechanism would scale to a larger, distributed
+system. Postgres uses a two-phase locking policy in main memory, which seems to
+imply that there would need to be either a distributed lock or a distributed
+timestamp ordering mechanism to maintain consistency in the order of
+transactions.  I would like to see how other this and other log-based database
+systems have handled the question of ordering in a log when distributing a
+database. 
