@@ -1,0 +1,337 @@
+Scribe notes for class 9/11/15. We didn't start until some way through the
+class, so a lot of early discussion is omitted.  These notes omit summary of
+the slides, and just focus on discussion.
+
+=================================
+
+Question: There's a policy question here on phase 3, if you're going to do a
+lot of time based queries, do you really want to collapse the queries?
+
+Some arguments about how the current design is correct because all of the
+deltas live on the archive.
+
+However, there's still a performance question.
+
+Question: When he says you do delta updates, the assumption is the record is
+the same and you have a bunch of fields and you write them.  Does this predate
+clobs?  I'm sure with clobs all these assumptions won't be true.
+
+Prof:  I'm sure that he wasn't thinking about it when he wrote the
+paper.  The usual way you deal with these large binary objects is by using
+diffs.  I don't think it would be inconsistent with this design..
+
+Question: Do you know which blocks you have to read in order to vacuum, or do
+you have to scan through all of them.
+
+   Answer: I guess you'd have to scan through everything.
+
+   Question: It's order N of your storage size
+
+Prof: Storage density seems like a real problem.o
+
+Prof: Don't forget btw that we have a substantial header on every disk block as
+well.  For small records you're storing way more metadata than data.
+
+======
+
+Lots of focus on moving to archive -- is this necessary
+
+HDFS is perfectly suited for append-only and is huge.  But HDFS isn't the
+fastest thing to access, maybe you don't want it.
+
+Could have the same ideas in modern systems, local disk for access, HDFS for
+archive.
+
+Also, he presents a lot of interesting ideas for how to do WORM which may still
+be interesting today.
+
+====
+
+One possible issue with the vacuum cleaner daemon.
+
+If the system is under heavy load, the daemon isn't really able to run.
+
+This means records are getting updated a lot, which means they have a long
+update history.
+
+This means that reads become more expensive.
+
+Which means vacuum cleaner never runs.  Spiral out of control
+
+Solution is give the vacuum cleaner high priority, but then you have latency
+issues.
+
+Question: Not that familiar with SQL, but how often do you want to do travel
+loads?
+
+Prof: To be clear, no systems other than this one allow that functionality.
+You can mark things up and get there, but the standard benchmarks don't do
+these point in time kinds of queries
+
+    Is it one of these build it and they will come things?
+
+    Prof: plausible, but it's worth noodling on, so why?
+
+    One possibility is how do you do temporal patterns in point in time
+    queries?  Perhaps we need a different way to express things?
+
+    Prof: It's a little hard to express in this systems patterns over time.
+    What happened to this over time vs that over time.
+
+Question: Can you do queries over the Number of changes to an object?
+
+    Prof: Yes but it's weird.
+
+Question: Could you get all versions of an object since the beginning of time
+with this?
+
+    Yes.  I'd be very slow though cause you'd have to go to archive.
+
+Prof: Historical perspective.
+    Non volatile ram didn't show up until long after this system died.
+
+    Other thing is the implementation turned into a reverse anchor record,
+    where the present was the front and you go backwards time.
+
+    Postgrest SQL through out this thing entirely.  They throw out multiversion
+    storage, but adopted mutli-version concurrency control.
+
+    One of the reasons to get rid of the archival storage stuff, was the cost
+    of all the metadata on the records.
+
+===========================
+
+Question: One thing I think is interested in this and sprite, is append only is
+only part of the story, they're always storing some metadata or index, where do
+you store that?  The engineering cost for keeping all this up to date is
+significant, it's something to think about.
+
+    Prof: Yeah that's one issue with all these systems there's layering of something
+    that looks progressive with something that's mutable.
+
+Question: It seems like it's an inherent property, even if you had infinite
+storage, you still need to find the bits that go together.  If you don't want
+to do that, you have to write the full version every time, which means you need
+to read the whole object at one time.
+
+        Well that's only a problem for large objects, but the tone of the paper
+        is that records are pretty small.
+
+        ...
+
+        This argument holds if you make no assumptions about the workload.  All
+        of these papers deal with a duality between write throughput and read
+        latency.  Depends on your assumptions, if you want to answer a general
+        query and go back in time this adds complexity.
+
+        Prof: Let's unpack that.  You're claiming correctly that if you know
+        your workload you could make reads fast.
+
+            Well you could pre-materialize results or data.  A lot of work in
+            the 90s did this.
+
+            Prof: Why can't you do that based on some stochastic observation and
+            caching?
+
+            You could probably do that.
+
+Prof: I want to pull all this together.  So we talked about caching.  We talked
+about fetching all our objects together.  And we separately talked about
+indexing and indexed materialized views.  There's caches, data organizations,
+predefined collections of things vs ad-hoc learned collections of things.
+There's also layers of the memory hierarchy vs work, in this paper you do work.
+
+Prof: We have storage hierarchy concerns, and organizational concerns, and
+workload.  Put all those out on the board, mix and match.
+
+Discussion ...
+
+====
+
+Prof: There's an invalid assumption that replication of files by someone else
+which is invalid.  With storage, we trust the vendors to give us a contract
+that if they ack a write, we believe it's written,  and that's true today.  We
+don't try to deeply integrate all the buffering at various levels, otherwise
+you end up with something too vertically integrated.
+
+====
+
+Back to Prof's main question.
+
+Hierarchy: Fast vs slow vs mem vs disk
+Locality:  Spatial/temporal Learned / specified
+Organization: Grouping of "objects" created at different times.
+
+One things about caching.  Saying at the relation you have to specify you're
+going to archive it is like specifying whether a file is read or write heavy.
+
+    Prof: Well you can do this using LRU etc.
+
+What's going on?
+
+    Prof: there's a shared concern.  Up until this time there was a presumption
+    that you should update things in place.  And what happens if you leave
+    these assumptions?
+
+    The reason it got abstract is we started to think about caches and indexes.
+    And locality etc,  these concerns are the threads which go through all of
+    these "radical" new designs.  They didn't do what's "temporally" natural.
+    The thing is there, I should change it, so change it.
+
+==============================================================================
+LSF Paper.
+==============================================================================
+
+- Disk are cheaper and bigger, but not faster.
+    Could do disk arrays.
+    But still fundamentally limited by disk seeks.
+
+    Prof: Both these papers said this but it seems false.  Bandwidth is
+    increasing.
+
+     Discussion came to the conclusion the issue is actually latency.
+
+Information is spread around.  Requires a bunch of seeks.  Lots of
+metadata you have to seek around.
+
+Prof: The observation that you'd put the metadata in memory would apply
+to FFS to?
+
+    They talk about this in paper.  The implementation of FFS doesn't
+    do a lot of these observations.  Also finding the metadata is
+    slow/difficult
+
+    Once you know where a file is, everything is exactly the same cost.
+
+    Prof: let me just plant that seed for later.  Suppose the FFS guys
+    just cached their metadata in memory too?
+
+FS Problems
+    Need five disk operations with seeks to write each file.  Inodes, actual
+    data etc
+
+    Prof: Super important, they're worried about metadata on write.  This is the
+    most expensive thing you can do on a filesystem.  It's not what they
+    benchmark actually, and it's not a core of the LFS argument.
+
+        They do actually try to do something around benchmarking this.
+
+Question: For the 5 disk I/Os. This is all for writing the metadata.
+    Prof: This is somewhat independent of the file organization.  It's about
+    the metadata being scattered.
+
+Inode contains metadata, disk address, indirect blocks, etc.
+Once you have inode, # of disk i/os is known -- block size etc.
+
+    Prof: The number of block fetches is known, but one of the things they don't
+    discuss is that we're trying to keep blocks close to each other.
+
+     -- Some discussion of this.
+
+Prof: If I update lots of files in a given directory, the directories files get
+smeared.  The locality of the directory with the file, is only with the latest
+file write.
+
+    Another thing they found interesting, segment cleaning is for hot and
+    cold, not for making locality better.
+
+    Prof: It's analogous to the postgres paper, it doesn't consider collections
+    of things.
+
+Logs are not straight forward:
+    Prof: Let's stop there, logs are trivial they just grow.  What's hard about
+    it? Space reclamation is the hard part, all of this tidying is the hard
+    part, if you have infinite disks is not a problem.
+
+    Prof: it's also interesting that the data we're generating is machine data,
+    which is just logs.
+
+    Question: Even in a progressive system, you still have to worry about
+    locality right?
+
+        Prof: well what do you do with logs?  You just do time series analysis.
+
+    Prof: Do you know what the workload which was relevant to these people?
+        We say small office etc.
+
+        Prof: These are all lies, it's really for software engineering.  It's
+        almost entirely mink.
+
+        Prof: Even if you start moving forward and looking at windows NTFS it's
+        much more commercial.  Which is why this is weird that they didn't go
+        to FFS things in the same directory are obviously going to be
+        co-referenced.
+
+Prof: LFS was slow on reads, that's why it didn't win.  Beyond that journaling
+came along and solved some of the simplicity of recovery problems.
+
+    Some comments about how journaling one as somewhat of a hybrid approach.
+
+Prof: Also not that the network file systems don't do this.  They probably have
+their own appraoch.
+
+Prof: So thematically let's go to our conversation about progressive systems.
+What about this was nicely progressive, and what about it was hard?
+
+    Writes were fast.
+
+    Crash recovery was easier.
+
+    Also the idea that you do want to have checkpoints, and don't want to have
+    a bunch of stuff you have to accumulate over time.
+
+        Some discussion about journaling and how this is different.
+
+Pretty sure what dropbox does is break up your file in trunks and use hashes to
+check for changes.
+
+    Prof: One of their big things was delta compression,
+
+Prof: Id do want to go back.  The progressive parts we said you needed to add
+checkpoints.  I wonder if this issue of reorganization is fundamental.  All
+these papers had to run around reorganizing things?
+
+    Does it make sense for SSD
+
+    These days, it's easy to get a drive that's far bigger than your
+    requirements, so reclaiming space is less interesting.
+
+    So you wouldn't have to clean if you had infinite space.
+
+        Prof: well my laptop is full of of videos and stuff.
+
+Prof: Let's think better.
+    What is GFS doing?
+
+    There's a subtlety here: When do you have infinite space on single node?
+    There's a certain amount of locality concern.
+
+    Though if you are arguing that the data is machine generated. and it's time
+    stamped. Then maybe it's possible to do stuff.
+
+Does locality still matter on SSDs?
+    Prof: well fragmentation still matters.
+
+    With machine generated data, you can conflate spacial temporal locality.
+
+In a system like HDFS, you sometimes want things to be distributed for
+performance etc.
+
+Prof: There's something about scope and granularity here that's making things
+confusing.  So Brazil vs us makes a ton of sense, but the way these things
+actually happen is this stuff gets shipped eventually.  The way things are
+today people ship things to one place, where one place is one big distributed
+thing.
+
+There might be a different in the way you treat aggregate workloads vs single
+system things.  When we think HDFS, we think about data warehouse.
+
+    Prof: when you think about HDFS you should think about index build.  Big
+    input, bigger output.
+
+Are there other workloads other than analytic workloads for which this
+progressive stuff makes sense.
+
+Question: If I have a variable I want to mutate it.  Apart from the overhead of
+locks, is it cheaper for me to write it to a new location, or the same
+location.  What are the implications form a locality perspective.
