@@ -81,3 +81,28 @@ Questions:
 - The description of MVCC seems incomplete, in that there appears to be a possibility for deadlocks, unless all reads are enforced before any write.
 - Cascading aborts is a potential problem of Hekaton, but the experiments do not seem to stress the system under such scenarios. Would we see performance collapse under cascading aborts?
 - One explicit architectural principle of Hekaton is to not partition the database, i.e. threads operate in a shared-memory environment. While this is reasonable for scaling-up, scaling-out in a distributed environment could present a different set of challenges. It would be interesting to see what and how design choices need to be changed to achieve high performance in the cloud.
+
+### Gabe Fierro
+
+Hekaton is an OLTP engine that operates in memory and uses disk for durability.
+It is designed for highly concurrent access, avoiding locks and taking a
+log-driven approach to applying changes and transactions. This paper also fills
+the gap of transaction manager for the bw tree paper (in fact, this uses a bw
+tree!). The primary goal of the paper is to improve the speed of their OLTP
+engine by reducing the number of CPU instructions required to execute a query
+and limiting bottlenecks. Tables contain record versions, which have a begin
+and end time for their validity (these timestamps are applied by transactions),
+which also helps in speeding up garbage collection, which is usually a source
+of bottleneck in log-based systems. Hekaton takes a similar approach to bw
+trees for decreasing locks: having processes complete partially finished
+actions such as scanning for dead records.
+
+It was not clear to me when reading the paper how checkpoints worked with the backing store.
+Are multiple checkpoints generated and saved, and then during crash recovery the whole
+system plays back the entire history of transactions? Effort is spent on parallelizing
+playback of some time epoch within a checkpoint, but history must still be played back
+sequentially unless steps are taken to remove unneeded history.  It would be nice
+to see some statistics around crash recovery time, though because this is offline it
+is not a huge issue. There is also a question around using the Hekaton approach for SSDs
+and eliminating the durability features -- where are the current bottlenecks in Hekaton
+and how do durability features factor into this?
