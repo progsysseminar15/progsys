@@ -67,3 +67,40 @@ updating the same record from multiple threads should probably provide some
 sort of ordering or feedback on last-write-wins, which would have to be left to
 a higher layer. Also in the case of sequential access, how does a bwtree with
 all of its mechanisms compare to more traditional data structures?
+
+
+### Xinghao Pan 
+Bw-Tree works by combining a number of techniques:
+- delta updates
+- log-structured store
+- indirection between logical and physical pages
+
+The most important technique is the use of delta updates, which allow for latch-free accesses via compare-and-swap operations.
+Delta updates also have small memory footprints, which improves cache hit rates, allows more throughput, and reduces the space that needs to be garbage collected.
+Using a log-structured store enables sequential writes to flash, instead of having to do random writes which are much slower.
+Mapping of logical pages to physical pages enables changes to be made to the physical pages on every delta update without having to propogate changes through the Bw-tree.
+This indirection also allows us to easily relocate a logical page's physical address after a delta update has been installed.
+(Note -- the mapping here is similar to the inode map we saw in LFS.)
+
+The paper claims that ACID semantics can be built on top of the Bw-tree, by a contract between the Transactional Component (TC) and the Data Component (DC).
+The DC supports WAL of the TC by ensuring all LSNs less than RSSP are durable and consolidated, and all LSNs greater than ESL are not durable.
+Recovery is achieved by reading the durable state on flash and replaying operations between RSSP and ESL.
+(This seems to partly punt the problem of durability to the higher-level TC, which has to ensure the durability of operations between RSSP and ESL.)
+
+One of the problems of logging that we had discussed in class last week was the difficulty of reclaiming space.
+In this paper, this is done via page consolidation (compressing deltas) and garbage collection via epochs.
+Garbage pages are only created during consolidation, and so can be easily identified by the thread performing the consolidation.
+To ensure the old page is not cleared away prematurely, threads joins the current epoch at the start of its operation to protect all garbage that might be created during and after the epoch.
+Garbage is only collected after all threads have left the epoch, which implies that no thread is still dependent on the garbage page.
+
+The above description, however, does not appear to fully address the problem of space fragmentation.
+Internal fragmentation is probably mitigated by buffering multiple deltas, but it is unclear from the paper how external fragmentation is managed.
+(Is external fragmentation even a problem for flash storage?)
+
+Bw-trees have many of the same innovations of POSTGRES and LFS, except that it explicitly takes advantage of flash storage, and implements latch-free algorithms for structure modification operations.
+As the conclusion points out, it would be interesting to try to apply these techniques to other settings.
+In particular, I would like to see how well an ACID database built on top on Bw-tree works, since the TC is responsible for maintaining the atomicity and durability of transactions.
+Another interesting application would be to implement time-range queries that are supported by POSTGRES.
+In the experiments, it was seen that performance degrades as the delta chain length increases to more than 2, so it is not ideal to maintain long delta chains.
+On the other hand, it is necessary to keep all deltas around to perform time-range queries.
+Achieving a good tradeoff between the two would be an interesting exercise.
