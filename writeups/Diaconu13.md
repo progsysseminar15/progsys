@@ -63,3 +63,21 @@ point-of-view".
 - In general it would be nice if DB system papers pointed out limitations of the system... (why is
   that not a requirement).
 
+### Xinghao Pan
+Hekaton is memory-resident database engine optimized for OLTP workloads.
+None of Hekaton's techniques are particularly novel; however, the combination of MVCC with the emphasis on main memory and compiled stored procedures appears to give Hekaton the big win over its competition.
+
+A few takeaways:
+- Hekaton is able to provide latch-free transaction isolation semantics by using optimistic MVCC. The only requirement is the ability to perform a CAS on the record End time.
+- Also because transaction order is determined by transaction end time (instead of log serialization order) in MVCC, it is possible to have multiple log streams and avoid bottlenecks on the end-of-log access.
+- As an unexpected (to me) benefit of residing in volatile main memory, Hekaton never writes dirty data to durable storage, and hence does not use write-ahead logging.
+This makes it possible to avoid problems associated with WAL, and to generate only a log record at transaction commit time.
+- Because the only data on durable storage is are checkpoints and minimal log data, and dirty data is never written to durable storage, fragmentation becomes less of a problem.
+- Another surprising feature of Hekaton is that checkpoints are not snapshots of the database, but rather compressed logs describing insertions and deletions since the last epoch.
+Hence, there is no need to pause the database, and the checkpointing process can run in the background in an essentially lock-free manner.
+
+
+Questions:
+- The description of MVCC seems incomplete, in that there appears to be a possibility for deadlocks, unless all reads are enforced before any write.
+- Cascading aborts is a potential problem of Hekaton, but the experiments do not seem to stress the system under such scenarios. Would we see performance collapse under cascading aborts?
+- One explicit architectural principle of Hekaton is to not partition the database, i.e. threads operate in a shared-memory environment. While this is reasonable for scaling-up, scaling-out in a distributed environment could present a different set of challenges. It would be interesting to see what and how design choices need to be changed to achieve high performance in the cloud.
