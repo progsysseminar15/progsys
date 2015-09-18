@@ -45,3 +45,25 @@ BW-Tree is a latch-free B-Tree designed for multi-core processing and flash stor
 
 One question that I have is that will there be an efficient way for the BW-Tree to resolve the conflict raised by two concurrent update operations for the same page. Currently, the paper assumes that the concurrency-control will make sure that no two operations will update the same object simultaneously. Without this guarantee, however, there may be multiple branches of delta updates for a given page. Is it possible to borrow some ideas from MVCC to resolve this issue?
 
+### Gabe Fierro
+
+The paper describes a lock-free and mostly non-blocking B-tree alternative to
+be used for constructing databases. The key components are using a layer of
+indirection to have the nodes in the tree point to virtual rather than physical
+memory locations, and applying changes to the tree as a log of deltas, rather
+than experiencing contention on editing a physical page directly. This means
+that the bw tree can use atomic operations (CAS) and does not have to
+coordinate access between multiple threads.  There are also parallels to be
+drawn between the delta log which is regularly compressed and how Postgres
+handles logs of changes. Also similar to LFS, the design explicitly assumes an
+abundance of main memory -- fetching a page from main memory is one of the few
+blocking operations in the design.
+
+The data structure does assume the existance of a concurrenct transaction
+manager, and it would be interesting to see how the introduction of that over
+this data structure impacts the great performance claimed by this paper. While
+fast and non-locking concurrent access is a goal  of the data structure,
+updating the same record from multiple threads should probably provide some
+sort of ordering or feedback on last-write-wins, which would have to be left to
+a higher layer. Also in the case of sequential access, how does a bwtree with
+all of its mechanisms compare to more traditional data structures?
