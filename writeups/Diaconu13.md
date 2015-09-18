@@ -23,3 +23,17 @@ Hekaton is a database engine that targets OLTP workloads. It is fully integrated
 
 As non-volatile storage becomes increasingly popular and affordable, it might be useful to think about what would be changed if we build the next version of Hekaton optimized for querying data stored in NVM. As the storage devices become cheaper, it might be feasible to preserve all the old versions of data without doing garbage collection. This may help if the user wants to retrieve a certain version from the past.
 
+### Ethan J. Jackson
+
+Hekaton is an enhancement of Microsoft's SQL server designed for OLTP
+workloads.  The basic idea inverts the traditional architecture of databases.
+Instead of keeping your database on disk, and using memory as a cache, we keep
+our database in memory, and use the disk just for durability.
+
+It was a cool paper which has obviously had quite a large impact in the real
+world.  One thing I wondered about is other potential applications of their
+transaction system.  One could imagine stripping away the SQL layer above it,
+and the disk durability layer below it, and shipping it as a library which
+could be built directly into applications.  You would end up with a lockless
+datastructure which is fairly general and has a lot of sophisticated features
+which have to be hand rolled  today.
