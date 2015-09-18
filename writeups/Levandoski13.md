@@ -114,3 +114,17 @@ Bw-tree pages themselves generalize the notion traditionally found in databases 
 The Bw-tree has some limitations. For one, it is an “atomic record store,” meaning that transactions are limited to single records. Also, the use of mutable state limits the ability to access old versions of the data, so even though this is a progressive data structure, it does not provide snapshot views. One implication of this is that scans can return data from different points in time.
 
 One of the things I like about this paper is the aggressive attempt to make the most hardware-provided concurrency mechanisms. I am curious to understand more about the needs and design considerations that shaped the concurrency primitives available on current CPUs, as well as what might be possible in the future. How could one modify a B+ tree to take advantage of transactional memory hardware? What concurrency primitives would be most helpful for efficient database indexes? I am also curious to understand how some of the limitations of the Bw-tree can be addressed. It seems that Hekaton provides MVCC on top of it, but I don't quite understand how this works. I'm curious how one might extend it to provide consistent views of data without sacrificing high throughput and low latency on updates. Lastly, I am wondering whether this is a brittle implementation. In particular, the Bw-tree claims to avoid cache invalidations by writing updates to new memory locations, but to ensure that other CPUs read the new values we need to be certain that they have not cached the old locations. Perhaps the Bw-tree makes use of memory fencing to achieve stronger guarantees, but as described this “not in cache” promise seems tricky to enforce. I would like to understand what tacit assumptions about the nature of the hardware and compiler the Bw-tree may rely upon.
+
+### K. Shankari
+
+This was an interesting paper that tied fairly low level concepts, like current
+trends in Computer Architecture, to fairly high level systems design. As
+somebody who has struggled with tree locking in a prior life, I thought that it
+was very cool that they were able to construct a lock-free system that could
+update trees efficiently.
+
+Nit: As somebody who is not a database person, I found this paper a little hard
+to read - it looked like it required a fair amount of database knowledge. In
+particular, the use of latches to mean implicitly mean database indexes in a
+hardware oriented paper sort of annoyed me. While designing an circuit, a latch
+is a flipflop that is used to latch or persist the state of a transient input.
