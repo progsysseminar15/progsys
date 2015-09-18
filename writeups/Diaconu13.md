@@ -106,3 +106,26 @@ to see some statistics around crash recovery time, though because this is offlin
 is not a huge issue. There is also a question around using the Hekaton approach for SSDs
 and eliminating the durability features -- where are the current bottlenecks in Hekaton
 and how do durability features factor into this?
+
+### K. Shankari
+
+This paper is a continuation of the earlier work on BW trees that indicates how
+the index works in the context of a larger system. It also introduces several
+other novel features of the system, such as a storage engine that is agnostic
+to the records structure and performs callbacks to the table specific layer in
+order to generate hashes and indexes. The paper also highlights seamless
+interoperation with an existing SQL server installation, which did not appear
+to introduce significant research problems, but which undoubtedly increased
+both the engineering complexity and the impact of the work.
+
+In relation to progressive systems, I noticed that they used timestamps for
+synchronization, which was acceptable for them since they were not a
+distributed system. I also noticed that, similar to the theme from last week,
+while we can get away with immutable data, it looks like progressive systems do
+need to mutate metadata so that the data can retrieved efficiently. Is this a
+general requirement? Is there such a thing as non-mutable metadata?
+
+I also noticed, that contrary to postgres, they did not have an explicit goal
+to keep data forever. It would be interesting to see why that was the case, and
+what it would take to add that support if they so wished.
+
