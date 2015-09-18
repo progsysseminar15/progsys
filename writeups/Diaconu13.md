@@ -6,7 +6,7 @@
 
 Hekaton introduces a number of new ideas: a mixture of in-memory and on-disk tables that can be accessed in the same manner, versioning with parallel garbage collection, native code compilation, commit dependencies, and continuous checkpointing. All of these are very cool features that seem to solve their intended problems very well. Commit dependencies make a lot of sense - transactions abort a very small portion of the time, so continuing optimistically under the assumption that a transaction will succeed seems reasonable. The continuous checkpointing also seems very intelligent - the main problem (that I can see) of checkpointing is the necessity to do some expensive operation all at once, but their clever data/delta stream system solves this issue.
 
-This system reminds me a lot of Postgres - versioned records, garbage/archive collection, etc., except that there are a number of features here that should allow it to be more successful, like garbage collection happening continuously and in parallel, as well as the fact that it's working in memory so things should be fast. So this begs the question - if you wanted a fully historical database like the original imagination of Postgres, could this system be easily and modified to achieve that while still being efficient? It seems that it lends itself to this. 
+This system reminds me a lot of Postgres - versioned records, garbage/archive collection, etc., except that there are a number of features here that should allow it to be more successful, like garbage collection happening continuously and in parallel, as well as the fact that it's working in memory so things should be fast. So this begs the question - if you wanted a fully historical database like the original imagination of Postgres, could this system be easily and modified to achieve that while still being efficient? It seems that it lends itself to this.
 
 ### Johann Schleier-Smith
 
@@ -37,3 +37,29 @@ and the disk durability layer below it, and shipping it as a library which
 could be built directly into applications.  You would end up with a lockless
 datastructure which is fairly general and has a lot of sophisticated features
 which have to be hand rolled  today.
+
+### Yifan Wu
+
+Hekaton combines a lot of existing algorithms and tricks to build a very targeted main memory DB
+targeted at OLTP workload. It's so dense that there is not much point in summarizing...
+
+So questions:
+
+- It seems that batching multiple log records into one large I/O could interfere with
+the granularity of transaction durability. Say if trasaction A, B, C, D were commited and something
+went wrong between C and D, then A, B, and C are all lost as well.
+- The speed improvements do come with some restrictions, for instance, the natively compiled procedures impose quite a few restrictions (e.g. user-defined
+functions) which might be a backwards comptibility issue for existing systems to migrate over.
+
+- I'm not sure about the argument against partitioning since data needs to be split somehow, even with
+no itention of partitioning it cannot all live on the same machine.
+- Not sure how checkpointing works... I don't see how splitting the updates/inserts and deletes help
+  with processing.
+- It would be great to discuss concerns in main memory databases in general, especially the
+fundamental trade-offs that the systems different against. Prof Pavlo from CMU made an interseting
+comment in his [blog
+post](http://www.cs.cmu.edu/~pavlo/blog/2014/06/open-problems-in-transaction-processing-part-1.html) about in-memeory database being a "mostly a solved problem from a research
+point-of-view".
+- In general it would be nice if DB system papers pointed out limitations of the system... (why is
+  that not a requirement).
+
