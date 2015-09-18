@@ -40,3 +40,8 @@ bw-tree).
 - B-trees are not trivial to implement, this seems orders of magnitude harder, are there
   considerations for the cost of complexity (and ease to intruduce bugs)?
 
+### Chenggang Wu
+BW-Tree is a latch-free B-Tree designed for multi-core processing and flash storage. In a latch-free setting, multi-core CPUs won’t get blocked by one another and therefore can reach near 100% utilization. Furthermore, since BW-Tree uses a delta update mechanism instead of update-in-place, it manages to reduce CPU cache invalidation. It is worth noting that BW-Tree uses atomic CAS instruction for updating state changes, and the strategy is used for both data changes and management changes. Also, BW-Tree is designed for flash storage. The characteristics of flash storage is that although it’s fast in random read, sequential read, and sequential write, it can incur a latency penalty for random write. To solve this problem, BW-Tree does log structuring at its storage layer, and therefore manages to avoid frequent random writes.
+
+One question that I have is that will there be an efficient way for the BW-Tree to resolve the conflict raised by two concurrent update operations for the same page. Currently, the paper assumes that the concurrency-control will make sure that no two operations will update the same object simultaneously. Without this guarantee, however, there may be multiple branches of delta updates for a given page. Is it possible to borrow some ideas from MVCC to resolve this issue?
+
