@@ -27,3 +27,20 @@ This paper presents a new isolation model: Read Atomic isolation. This model ens
 
 One thing to note is that different from the traditional timestamp based CC, the timestamp for RAMP is used to distinguish between different transactions but impose no ordering guarantees to these transactions. This also implies that the model does not guarantee serializability. A clever point in the design is that the two-round write protocol guarantees that all writes in the transaction are present on their partitions, so the read does not have to stall and wait. It would be interesting to see how this new isolation model is adoptable by commercial DBMSs.
 
+### Yifan Wu
+
+RAMP formalizes and improves what a lot of existing large systems practices regarding consistency.
+I don't think I fully understand the theory behind this paper so mostly questions.
+
+I was most surprised by how RA is sufficient for most workflows. It would be great to explain how
+and why... Especially in the context of the CAP theorem. Why is this versioning so much more
+powerful than existing MVCC systems?
+
+I hope that we could dive into the three respective RAMP algoriths and compare them against existing
+algorithms mentioned in the survey. In particular the survey mentioned that evaluating these
+algorithms are very difficult, and it would be nice to get a sense of progress made in terms of
+understanding the bahavior/trade-offs.
+
+I'm also not fully convinced that this is completely linear:
+- wouldn't consistency deteriorate (in terms of time/transactions affected)
+- # of replicas?
