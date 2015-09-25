@@ -44,3 +44,31 @@ understanding the bahavior/trade-offs.
 I'm also not fully convinced that this is completely linear:
 - wouldn't consistency deteriorate (in terms of time/transactions affected)
 - # of replicas?
+
+### Gabe Fierro
+
+This paper presents a new isolation model and algorithms for implementing Read
+Atomic (RA) isolation over a distributed database, in which either all or none
+of each transactions' updates are visible to other transactions. The RAMP
+transaction algorithms presented guarantee gommit dispite partial failures and
+minimized communication between servers. These two situations address the most
+expensive part of computing in distribued systems -- synchronization -- and
+explore the weaker guarantee of read atomicity and how it can be achieved with
+minimum synchronization between copies of data value X across several servers.
+The paper presents 3 methods involving multi-versioning to prevent writers
+from blocking each other, and we see the traditional space/speed tradeoff
+with the amount of metadata associated with a transaction increasing as the
+number of round-trip synchronization messages decrease and vice versa.
+
+I am unfamiliar with the family of atomicity guarantees and how they map onto
+possible workloads. the paper mentions that atomic visibility is required for
+secondary indexing, foreign key constraint enforcement and materialized view
+maintenance, but does not mention to what degree these tasks are actually
+limited by cross-machine synchronization. It may very well be that this is
+common knowledge to the db community, but I wonder to what degree such
+operations are the actual bottleneck in some db applications. I do like the
+idea that there are simpler guarantees that involve less coordination that
+produce the desired results. Given the pattern we have been seeing with other
+distributed, append-only systems, I wonder what effect the proposed garbage
+collection (as an optimization) would have on the implementation complexity and
+performance of the system.
