@@ -72,3 +72,12 @@ produce the desired results. Given the pattern we have been seeing with other
 distributed, append-only systems, I wonder what effect the proposed garbage
 collection (as an optimization) would have on the implementation complexity and
 performance of the system.
+
+
+### Johann Schleier-Smith
+
+The atomic visibility model of RAMP transactions is to me and appealing one. It speaks to the needs of many modern applications, and nicely classified the trade-offs faced by consistency models. There is a simple definition for atomicity: fractured reads cannot occur. This says nothing about out-of-order reads, and it makes no provision for synchronization between operations. The guarantees weaker than that of snapshot isolation, or of serializability, but is allows RAMP to provide "synchronization independence," meaning that all transactions are guaranteed to succeed, absent hardware failures. 
+
+There are a number of interesting trade-offs discussed in the paper. The three transaction models trade-off between replicating metadata across partitions, which uses space, and additional rounds of communication, which increases latency on reads. The authors also choose a model in which readers never block on writers. It is probably possible to provide faster writes, as well as more up-to-date-reads  if readers wait until in-flight write transactions finish.
+
+One of the proposed applications of the RAMP approach that I find particularly compelling is global secondary indexing. I understand the importance of atomicity across partitions, however, questions about the implementation remain in my mind. Indexes can involve complex data structures, and so maintaining versions with different timestamps and providing garbage collection over these structures could pose some challenges. I also am curious how RAMP might be used, or extended, to allow further progressive systems capabilities. For example, how might one incorporate support for merge operators to allow scalable implementation of a range of monotonic programs.
