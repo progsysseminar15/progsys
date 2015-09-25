@@ -41,3 +41,22 @@ This paper surveys traditional concurrency control methods in both centralized a
 
 Although the algorithms mentioned in the paper guarantee serializability, the cost of both 2PL and T/O is pretty high. In reality, few commercial systems provide such guarantee, and the majority of systems choose to sacrifice consistency for performance. As long as the trade-off between consistency guarantees and performance exists, there is no ‘one-size-fit-all’ solution to all applications. It would be interesting to see how future systems can balance the trade-offs for some targeted application workloads.
 
+### Xinghao Pan
+
+Berstein and Goodman provide a comprehensive review of the contemporary concurrency control methods, which are categorized into two classes of two phase locking (2PL) and timestamp ordering (T/O).
+2PL uses mutual exclusion to prevent conflicts from happening, whereas T/O methods restarts transactions that violate the timestamp ordering.
+The goal of concurrency control methods is to provide isolation and serializability.
+In particular, the T/O methods (especially MVCC and conservative T/O) are most like progressive systems.
+
+One of the key insights (claimed by the authors) is that rw synchronization and ww synchronization can be attain separately by different methods, and then joined together by ensuring a common serialization ordering.
+This allows them to mix and match various 2PL and T/O methods together into 47 integrated concurrency control methods, some of which they claim are better than using the same method for both rw and ww synchronization.
+
+In the nearly 35 years since, there is a recognition that serializability is often too expensive to achieve in a distributed environment, and also that many applications do not actually require such strong guarantees.
+Some of the excellent work done here may thus no longer be relevant in today's context.
+
+Nevertheless, I think there are a couple of interesting ideas that are worth thinking about.
+Firstly, this paper shows that there are different ways that we can implement progressive systems (while providing transactional serializability).
+Different strategies may be used to manage conflicts -- restarts and buffering both work by separating the notion of real-time with system history, and we can even integrate mutual exclusion mechanisms.
+Secondly, the separation of rw and ww synchronization suggests that we can deal with different types of conflicts in different ways, as long as they are tied together in a coherent manner.
+I would speculate that this could also be true at weaker isolation levels.
+
