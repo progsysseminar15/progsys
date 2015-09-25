@@ -60,3 +60,18 @@ Different strategies may be used to manage conflicts -- restarts and buffering b
 Secondly, the separation of rw and ww synchronization suggests that we can deal with different types of conflicts in different ways, as long as they are tied together in a coherent manner.
 I would speculate that this could also be true at weaker isolation levels.
 
+
+### Yifan Wu
+
+This paper survey and consolidate what was apparently a myriad collection of algorithms on
+concurrency control over DDBMS, and present that to the core the algoirthms are just concerned with
+two types of consistencies (rw and ww), with two basic methods: 2PL and timestamps. It also poses the
+challenge of evaluating these algorithms as open questions.
+
+It would be valuable to discuss what ideas we could re-use for weaker consistency gurantees, i.e.
+the "fundamental trade-offs". For instance, it seems that the write set idea in RAMP might be
+related to the buffering ideas.
+
+I also wonder if there are any new hardware developments that make any of the algorithms more
+feasible. I might be completely wrong but F1's almost-global atomic clock might be an example where
+hardware improved T/O style algorithms performance.
