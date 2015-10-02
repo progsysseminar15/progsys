@@ -92,3 +92,28 @@ programming languages, much in the way some of the features of Haskell (type
 inference, etc) made their way into traditional languages, scala being the best
 example.   It's not entirely clear to me how to achieve this, but if it's
 possible the impact would be dramatic.
+
+### K. Shankari
+
+I hadn't heard about the CALM theorem before, except in passing during the
+first class, so it was an interesting lens through which to view the world. I
+found the paper a bit hard to read because of lack of familiarity with Datalog,
+but at a high level, the notion appears to be that you require explicit
+representation of data dependencies in the language, and then use that to
+perform analyses on properties of the derived data.
+
+This is an interesting concept, but does it require a separate language, with a
+brand new (and for those not used to Ruby, cryptic) syntax? Is the author now
+going to write ports to other major programming languages such as python or
+java/scala? Isn't it possible to perform similar analyses of existing
+languages? For dynamically typed languages such as python and ruby, the
+attribute retrieval method can be subclassed to automatically generate a log of
+read and write accesses to data, although that would not be able to capture the
+way in which those accesses are combined.
+
+I also found the notion of moving synchronization to the client powerful as a
+potential technique for scaling synchronization. I found this particularly
+relevant in the case of mobile devices, which are typically tied to a single
+user and are personal in the truest sense of the word. Although in mobile
+devices, you also need to consider backchannel or out of band synchronization
+between the phone and wearables...

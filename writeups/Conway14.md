@@ -81,3 +81,17 @@ With the additional confluent datatypes proposed by BloomL, I wonder if there
 are other non-obvious additive operations that could lean Edelweiss more into a
 general programming domain, or maybe other distributed programming idioms
 that we could map the lessons of Edelweiss onto: MVCC? Distributed consensus?
+
+### K. Shankari
+
+Given systems-oriented focus on garbage collection that we have had earlier, it
+was interesting to see it approached as a logic/lattice problem that could be
+solved generically.
+
+However, as a systems person, I would have liked to see an evaluation against
+prior systems. What is the difference from a hand-tuned implementation? Does it
+eliminate the garbage collection overhead? Does it make it more expensive to
+query for records?
+
+Also, do we ever need to reclaim storage? We have discussed in class that
+storage is cheap.
