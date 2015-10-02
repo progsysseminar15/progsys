@@ -15,3 +15,28 @@ I am still interested in understanding in more details how lattice logic can hel
 Having no prior experience with Bloom, this paper was very informative in a number of ways. The concept of a monotonic lattice is fascinating, especially the notion of how to formulate a shopping cart as a semi-bounded lattice. The distinction of morphisms and monotones was especially interesting and subtle. One key takeaway was that, though most applications do not seem monotonic initially, they can be formulated in such ways that they do become monotonic - I think the shopping cart is an excellent and unexpected example of this. 
 
 I am left with some questions about how exactly some of these things work, though that is likely from a lack of knowledge of Bloom. How is state replicated across systems? Do they trade entire maps and merge? In the KVS case study, it seemed that each key was stored on all systems; how easy would it be to also provide partitions? Are there fundamental limitations on what types of systems can be implemented using BloomL and if so, can we categorize them? Can we perhaps provide interfaces on top of BloomL that abstract away the necessity of working with monotonic lattices only while still providing the same guarantees -- basically, how general is this?
+
+
+### Xinghao Pan
+
+The CALM theorem states, approximately, that all logically monotone programs are confluent (invariant to message reordering and retry) and hence eventually consistent.
+"Monotonicity" here refers to the property that adding things to the input can only increase the ouput (see [http://www.bloom-lang.net/calm/](http://www.bloom-lang.net/calm/)).
+In that sense, a monotone program is a progressive program that never has to retract statements made.
+"Eventual consistency" refers to achieving a final state of the system without coordination and independent of the message ordering.
+Thus, very vaguely and informally, progressive (monotone) systems do not require coordination to achieve (eventual) consistency.
+
+Bloom and Bloom^L are languages that encourage developers to write monotone (sub-)program with minimal non-monotone coordination.
+Bloom^L extends Bloom by extending the notion of sets with monotone union operations to join semi-lattices -- a class of objects that have a well-defined commutative, associative, idempotent merge functions.
+
+The CALM / Bloom work appears to be very similar to the I-confluence work, with some subtle differences (see [Peter Bailis's comment](http://www.bailis.org/blog/when-does-consistency-require-coordination/)):
+1. I-confluence consistency refers to the C of ACID, and is concerned with ensuring validity at every intermediate state
+2. CALM / Bloom consistency refers to the final eventually consistent deterministic state
+Interestingly, both make use of commutative, associative, and idempotent merge functions to reconcile divergent replicas, which seems to suggest the key to minimizing coordination is the ability to merge divergent states.
+As noted in the I-confluence paper, it would be interesting to dig deeper into how the two are related and in what concrete ways they differ.
+
+Another thing that I would be interested to examine in greater detail is the implementation of rule evaluations / fact derivations.
+The implementation described in the paper works well if the set of rules is small, which allows for a fast application to the new facts derived in the last time step.
+However, in some of my own work, the set of rules can be very large (in the order of the size of the data set), but generate few new facts at each time step.
+In such scenerios, rules are redundantly evaluated in the paper's implementation.
+An alternative implementation that triggers new rules to be evaluated could instead be much more efficient.
+Also possible would be to prioritize rules and only evaluate a subset at each time step.
