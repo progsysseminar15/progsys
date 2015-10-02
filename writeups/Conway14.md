@@ -43,3 +43,22 @@ This paper presents Edelweiss, a sublanguage of bloom that can automatically gen
 
 One concern is that although Edelweiss removes the burden from the programmers to write GC protocols, it requires the programmers to follow certain restrictions while generating the program. It also doesn’t guarantee that the auto-generated GC protocol is optimal. If it tells the programmer something cannot be reclaimed, it’s either because the program is not written correctly or because the analysis is incomplete, but we wouldn’t be able to know which is true. Another open question is that how easy is this technique generalizable to other languages.
 
+### Ethan J. Jackson
+Monotonic systems necessarily have a problem of state accumulation.  If
+previous decisions can never be changed, memory of those decisions grows
+unbounded.  Many systems (including most of those we've read about in class)
+solve this problem in an ad hoc fashion by scanning for state which is no
+longer relevant and deleting it.  However, done manually, you lose the
+provable consistency that CALM provides. Edelweiss solves this problem by
+allowing developers to write their systems in a monotonic fashion (accumulating
+state infinitely), while having the compiler garbage collect old state in a
+provably correct fashion.  This allows systems to be developed with the
+benefits of the CALM theorem, but maintaining the efficiency of hand-rolled
+systems.
+
+My thoughts around this are very similar to my thinking around the declarative
+imperative.  It's a very cool system with some dramatic implications.  That
+said, I wonder how a partial approach can be fit into existing systems without
+the need to rewrite existing applications in datalog.  I'm sure there's
+somewhat of a middle-ground here that would be extremely interesting to explore.
+

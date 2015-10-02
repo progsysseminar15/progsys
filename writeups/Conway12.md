@@ -71,3 +71,24 @@ accounts) that incorporate logic that is not necessarily confluent, or even
 incorporating security features. How well does the Bloom approach scale when
 applied to real-world systems?  Or is Bloom mainly intended as a prototyping
 language?
+
+### Ethan J. Jackson
+
+The CALM theorem shows that any system which is "monotonic" (i.e. collects
+information but never changes its mind about old results) is necessarily
+eventually consistent.  The goal of this paper is to extend Bloom with the
+ability to express programs which conform to CALM, and automatically verify
+that they do, in fact, conform.  In doing so, one could create distributed
+systems which are provably correct, without the need for expensive coordination
+algorithms.
+
+This work in some ways reminds me of the work done by the PL people w.r.t to
+advanced languages which have strong type systems (ML, Haskell, and the like).
+It's quite a useful exercise to consider what the theoretically "right way" to
+build these systems is.  I suppose the biggest question that this paper raised
+for me, is how to approach the problem from the other end of the spectrum.  How
+do we bring some of the insights of CALM analysis to existing traditional
+programming languages, much in the way some of the features of Haskell (type
+inference, etc) made their way into traditional languages, scala being the best
+example.   It's not entirely clear to me how to achieve this, but if it's
+possible the impact would be dramatic.
