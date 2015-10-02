@@ -1,3 +1,7 @@
+# Logic and Lattices for Distributed Programming
+
+## Neil Conway, William Marczak, Peter Alvaro, Joseph M. Hellerstein, David Maier
+
 ### Johann Schleier-Smith
 
 The authors seek a powerful and programmer-friendly approach to distributed programming, one that makes is easier to build software that is reliable, yet runs with concurrence. For me, one sentence summarizes what this paper is about: “database theory on monotonic logic provides a powerful lens for reasoning about distributed consistency.”

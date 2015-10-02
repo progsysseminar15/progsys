@@ -1,3 +1,7 @@
+# Edelweiss: Automatic storage reclamation for distributed programming
+
+## Neil Conway, Peter Alvaro, Emily Andrews, Joseph M. Hellerstein
+
 ### Johann Schleier-Smith
 
 The way that Edelweiss builds upon bloom is interesting. First it removes features, the <- deletion operator is not supported, and channels must be derived from persistent collections. The latter demand leads to distributed applications that follow what the authors call the *Event Log Exchange* (ELE) pattern. While I have not found ELE defined or described as a pattern elsewhere in the literature, it embodies an intuitive notion for distributed systems. All state can be constructed, or reconstructed if necessary, by replay of communication between nodes.
