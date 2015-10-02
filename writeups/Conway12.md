@@ -47,3 +47,27 @@ This paper presents Bloom^l, an extension to Bloom that supports lattices and en
 
 One concern that occurs to me is that not all distributed programs can be written in a confluent fashion, and when we write a program, it is unclear whether this program is expressible as a composition of lattices. Therefore, it would be nice to have a mechanism that helps users decide which portion of the program is expressible as lattices and which is not. 
 
+### Gabe Fierro
+
+This paper presents an extension to the Bloom language that gets around some of
+the previous limitations of the language in regards to composing distributed
+systems that achieve consistency without coordination.  At the core of the
+approach is CALM analysis which asserts that distributed inconsistency can only
+occur at a point of order. The Bloom language previously only contained support
+for monotonically increasing sets which make constructing these types of
+systems easy. BloomL extends the data types to use other monotonic structures
+(while giving users the ability to define their own) and also works through how
+to compose confluent programs from smaller, more grokkable confluenct components.
+
+I do not know much about the Bloom language, but I would be interested to see
+how much of its abilities are facilitated by operating in a dynamic language
+such as Ruby, and if confluent guarantees and CALM analysis could be offered by
+static analysis tools in languages perhaps better suited to large scale web
+services: Ruby is not bad, but there are compiled languages (e.g. Go and Scala)
+that can achieve much better performance than a dynamic language. The examples
+presented in this paper are also very limited, and I wonder how possible it is
+to express larger systems (even involving trivial features such as user
+accounts) that incorporate logic that is not necessarily confluent, or even
+incorporating security features. How well does the Bloom approach scale when
+applied to real-world systems?  Or is Bloom mainly intended as a prototyping
+language?
