@@ -40,3 +40,10 @@ However, in some of my own work, the set of rules can be very large (in the orde
 In such scenerios, rules are redundantly evaluated in the paper's implementation.
 An alternative implementation that triggers new rules to be evaluated could instead be much more efficient.
 Also possible would be to prioritize rules and only evaluate a subset at each time step.
+
+### Chenggang Wu
+
+This paper presents Bloom^l, an extension to Bloom that supports lattices and enables CALM analysis to the program consisting of arbitrary lattices. Although CRDT is the first to propose a conflict-free data model, it has a scope dilemma: on one hand, a small module such as a set makes the lattice properties easy to analyze, its functionality is quite restrictive and provide little usage in practice. On the other hand, although a large CRDT provides rich functionalities and application guarantees, the burden of ensuring lattice properties are left entirely to the programmers. I think the key idea for Bloom^l is that it allows the programmers to compose safe lattices into a bigger and bigger monotonic program. This bottom-up approach makes constructing a larger confluent program significantly easier than before, and because programmers just need to keep track of whether each small lattice component satisfies the correctness properties, this approach is also more scalable.
+
+One concern that occurs to me is that not all distributed programs can be written in a confluent fashion, and when we write a program, it is unclear whether this program is expressible as a composition of lattices. Therefore, it would be nice to have a mechanism that helps users decide which portion of the program is expressible as lattices and which is not. 
+

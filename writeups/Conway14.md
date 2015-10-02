@@ -36,3 +36,10 @@ All we require is that all collections only accumulate knowledge and that there 
 The first requirement is easily obtained almost by definition of progressive systems.
 Figuring out dominated facts may be harder, but could possibly be done by having a conservative estimate of the minimum progress across all nodes.
 (Think about conservative T/O in Berstein & Goodman.)
+
+### Chenggang Wu
+
+This paper presents Edelweiss, a sublanguage of bloom that can automatically generate GC protocol for distributed programs. The motivation is that although ‘event log exchange’-based programming model offers advantages such as high concurrency, availability, and easy recovery, the logs can consume unbounded storage. Therefore, a good GC protocol is needed. However, custom GC protocols are difficult to implement and maintain. Edelweiss, by posing some restrictions to the programming model, enables automatic generation of GC protocol that primarily uses ‘difference reclamation’ to reclaim storage. It exploits the fact that program outcomes are usually represented as views, which are resulted from set differences. Based on this, Edelweiss can reclaim tuples that no longer contributes to the program outcomes.
+
+One concern is that although Edelweiss removes the burden from the programmers to write GC protocols, it requires the programmers to follow certain restrictions while generating the program. It also doesn’t guarantee that the auto-generated GC protocol is optimal. If it tells the programmer something cannot be reclaimed, it’s either because the program is not written correctly or because the analysis is incomplete, but we wouldn’t be able to know which is true. Another open question is that how easy is this technique generalizable to other languages.
+
