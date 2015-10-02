@@ -62,3 +62,22 @@ said, I wonder how a partial approach can be fit into existing systems without
 the need to rewrite existing applications in datalog.  I'm sure there's
 somewhat of a middle-ground here that would be extremely interesting to explore.
 
+### Gabe Fierro
+
+In most of these monotonically increasing programs we have been looking at,
+garbage collection presents a problem: either as a "pause" in the whole program
+flow or as some complex logic that requires additional metadata and layers of
+indirection to solve. Edelweiss is a sublanguge of Bloom that uses only
+"additive" operators -- a subset of the confluent operators offered by Bloom --
+to guarantee that facts are never retracted. With this simplification of the
+language, the paper presents a nice bag of tricks for performing storage
+reclamation "in band" to the normal program flow. That is, the program does not
+make an additional pause step in order to do the GC as the program is rewritten
+to contain GC logic.
+
+Performing distributed garbage collection without requiring coordination is a
+very cool idea, and one that dovetails nicely with the construction of Bloom.
+With the additional confluent datatypes proposed by BloomL, I wonder if there
+are other non-obvious additive operations that could lean Edelweiss more into a
+general programming domain, or maybe other distributed programming idioms
+that we could map the lessons of Edelweiss onto: MVCC? Distributed consensus?
