@@ -76,7 +76,7 @@ performance of the system.
 
 ### Johann Schleier-Smith
 
-The atomic visibility model of RAMP transactions is to me and appealing one. It speaks to the needs of many modern applications, and nicely classified the trade-offs faced by consistency models. There is a simple definition for atomicity: fractured reads cannot occur. This says nothing about out-of-order reads, and it makes no provision for synchronization between operations. The guarantees weaker than that of snapshot isolation, or of serializability, but is allows RAMP to provide "synchronization independence," meaning that all transactions are guaranteed to succeed, absent hardware failures. 
+The atomic visibility model of RAMP transactions is to me and appealing one. It speaks to the needs of many modern applications, and nicely classified the trade-offs faced by consistency models. There is a simple definition for atomicity: fractured reads cannot occur. This says nothing about out-of-order reads, and it makes no provision for synchronization between operations. The guarantees weaker than that of snapshot isolation, or of serializability, but is allows RAMP to provide "synchronization independence," meaning that all transactions are guaranteed to succeed, absent hardware failures.
 
 There are a number of interesting trade-offs discussed in the paper. The three transaction models trade-off between replicating metadata across partitions, which uses space, and additional rounds of communication, which increases latency on reads. The authors also choose a model in which readers never block on writers. It is probably possible to provide faster writes, as well as more up-to-date-reads  if readers wait until in-flight write transactions finish.
 
@@ -86,4 +86,12 @@ One of the proposed applications of the RAMP approach that I find particularly c
 
 Previous to reading this, I wasn’t really aware of the relaxed consistency models available, so seeing some presented was pretty interesting. The techniques employed here seem to be very clever. I especially appreciate the development of three different techniques, all of which have merit in different ways, allowing the tuning of a database based on workload (e.g. a workload where transactions are always short may want to use RAMP-F). One thing I noted is that RAMP-H, if used with decent-sized
 
-One question raised here is what use cases RA semantics are sufficient for. The paper mentions a few, and they do seem to be pretty broad, but I am not familiar enough with workloads to know if this is really something that can be widely applied - though certainly it’s an improvement over not having RA semantics. One thing I found interesting is that, under the assumption of very short transactions, RAMP-F actually holds less metadata than RAMP-H. I wonder if RAMP-H Bloom filter size could be dynamic based on the size of transactions? 
+One question raised here is what use cases RA semantics are sufficient for. The paper mentions a few, and they do seem to be pretty broad, but I am not familiar enough with workloads to know if this is really something that can be widely applied - though certainly it’s an improvement over not having RA semantics. One thing I found interesting is that, under the assumption of very short transactions, RAMP-F actually holds less metadata than RAMP-H. I wonder if RAMP-H Bloom filter size could be dynamic based on the size of transactions?
+
+### Michael Andersen
+
+The isolation model presented in this paper is an interesting one. I think a stronger case for its relevance is made in the various slides that exist for presentations of the paper. It is clear that it does not solve all problems, but there are certainly many problems that it does solve. The issue of inconsistent secondary indices is a good one, as it is easy to follow.
+
+The mechanism takes a few minutes to fully understand, but once it is understood the simplicity of it is very appealing. Something that looks a little bit like 2PC ensures that all servers have the data that will be comitted before any of that data becomes visible. If any query accidentally sees some data that has become partially visible, it can use another RTT per server to get atomic transaction level consistency by asking for the version of the data that is not yet visible, but is guaranteed to exist. The Small, Fast and Hybrid algorithms are not particularly significant, they are just optimisations in case people are upset about having state proportional to the commit size.
+
+Overall I really enjoyed this paper. Seems like a great idea.
