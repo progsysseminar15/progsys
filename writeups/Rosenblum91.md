@@ -83,7 +83,7 @@ In particular, the paper does not address how LFS should manage multiple process
 Related to this issue is how we can support transactional semantics (ACID) on top of LFS
 
 An advantage of LFS that still holds today, I think, is that recovery is simplified.
-This is something that we see in Spark too -- as long as the lineage (log of actions) is retained, all 
+This is something that we see in Spark too -- as long as the lineage (log of actions) is retained, all
 
 Most importantly, I think we need to understand LFS in its historical context, including whether it was successful, and why?
 
@@ -146,3 +146,22 @@ predictable.
 But that might not be true any more with support for CLOBs and with NoSQL
 databases. It would be interesting to look up the performance metrics of those
 databases.
+
+### Michael Andersen
+
+Being a bit late with my review, I will omit the summary of the paper. What I
+found interesting about this topic is that it seems obvious to the authors that
+a big issue with a log structured file system is reclamation of space and how
+cleaning works. They spent a good chunk of the paper on this, and I'd wager a good
+chunk of the system complexity. I wonder now, if this idea were revisited, if
+the priorities would shift, and if it would change things. For example, if a
+log structured distributed filesystem for big data were engineered, and the
+workload was generally append, would you need cleaning? The answer is not
+an unequivocal no, because copying files around to improve locality might still
+be important. Nevertheless, the role of the cleaning would change a lot.
+
+I am a bit disappointed that a modern implementation of this does not exist. I
+think that a filesystem tailored for mostly-append workloads would be an asset,
+certainly in the systems that I work with. Considering that progressive systems
+often result in this type of workload, I think that such a file system would
+receive a better welcome today.

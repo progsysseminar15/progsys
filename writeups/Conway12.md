@@ -12,7 +12,7 @@ I am still interested in understanding in more details how lattice logic can hel
 
 ### Erik Krogen
 
-Having no prior experience with Bloom, this paper was very informative in a number of ways. The concept of a monotonic lattice is fascinating, especially the notion of how to formulate a shopping cart as a semi-bounded lattice. The distinction of morphisms and monotones was especially interesting and subtle. One key takeaway was that, though most applications do not seem monotonic initially, they can be formulated in such ways that they do become monotonic - I think the shopping cart is an excellent and unexpected example of this. 
+Having no prior experience with Bloom, this paper was very informative in a number of ways. The concept of a monotonic lattice is fascinating, especially the notion of how to formulate a shopping cart as a semi-bounded lattice. The distinction of morphisms and monotones was especially interesting and subtle. One key takeaway was that, though most applications do not seem monotonic initially, they can be formulated in such ways that they do become monotonic - I think the shopping cart is an excellent and unexpected example of this.
 
 I am left with some questions about how exactly some of these things work, though that is likely from a lack of knowledge of Bloom. How is state replicated across systems? Do they trade entire maps and merge? In the KVS case study, it seemed that each key was stored on all systems; how easy would it be to also provide partitions? Are there fundamental limitations on what types of systems can be implemented using BloomL and if so, can we categorize them? Can we perhaps provide interfaces on top of BloomL that abstract away the necessity of working with monotonic lattices only while still providing the same guarantees -- basically, how general is this?
 
@@ -45,7 +45,7 @@ Also possible would be to prioritize rules and only evaluate a subset at each ti
 
 This paper presents Bloom^l, an extension to Bloom that supports lattices and enables CALM analysis to the program consisting of arbitrary lattices. Although CRDT is the first to propose a conflict-free data model, it has a scope dilemma: on one hand, a small module such as a set makes the lattice properties easy to analyze, its functionality is quite restrictive and provide little usage in practice. On the other hand, although a large CRDT provides rich functionalities and application guarantees, the burden of ensuring lattice properties are left entirely to the programmers. I think the key idea for Bloom^l is that it allows the programmers to compose safe lattices into a bigger and bigger monotonic program. This bottom-up approach makes constructing a larger confluent program significantly easier than before, and because programmers just need to keep track of whether each small lattice component satisfies the correctness properties, this approach is also more scalable.
 
-One concern that occurs to me is that not all distributed programs can be written in a confluent fashion, and when we write a program, it is unclear whether this program is expressible as a composition of lattices. Therefore, it would be nice to have a mechanism that helps users decide which portion of the program is expressible as lattices and which is not. 
+One concern that occurs to me is that not all distributed programs can be written in a confluent fashion, and when we write a program, it is unclear whether this program is expressible as a composition of lattices. Therefore, it would be nice to have a mechanism that helps users decide which portion of the program is expressible as lattices and which is not.
 
 ### Gabe Fierro
 
@@ -117,3 +117,29 @@ relevant in the case of mobile devices, which are typically tied to a single
 user and are personal in the truest sense of the word. Although in mobile
 devices, you also need to consider backchannel or out of band synchronization
 between the phone and wearables...
+
+### Michael Andersen
+
+I had not encountered Bloom before, but I have worked extensively in VHDL and
+Verilog, both hardware description languages where the notion of timesteps and
+making statements that are either true always (combinatorial logic) or assign
+to the next timestep (clocked logic) are prevalent. As a result I was distracted
+by the awesomeness of the idea of Bloom itself, and focused less on the idea of
+the added Lattice-based operations.
+
+Nevertheless I think it is a great idea, and I wonder if some of these ideas
+could be put back into the hardware land, where you could build more complex
+combinatorial logic by using lattice operations. Combinatorial logic is
+inherently faster than clocked operations, so this could really pay off in the
+realm of accelerators (small pieces of hardware that replace computationally
+intensive blocks of code). The difficulty with combinatorial logic is
+that you cannot ever mutate something that has been decided, as it would lead
+to oscillation (at best) or metastability latching (at worst). Everything must
+therefore be "monotonic" (although that is not the word used in the field).
+Even in clocked logic, multiple clock domains add a degree of uncertainty to
+when signals will arrive (like channels in Bloom). I am surprised that I did
+not think of the parallel with progressive systems before, but it could be a 
+really fruitful crossover.
+
+We should get someone from the Chisel/RISCV team in the ParLab to come give a talk
+about these issues in the hardware land.

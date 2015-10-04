@@ -126,3 +126,19 @@ interface.
   an overview/sense of how every one else does this.
     * Is this view of events new? It seems that the ability to play back history is new-ish
     * A lot of companies already use shadow traffic to implement testing, which is a bit similar
+
+### Michael Andersen
+
+I found the central idea in this paper pretty straightforward: decouple input events from processing
+with an infinite event log. This allows you to replay the log for testing purposes. This pattern is pretty
+common in a variety of areas, but I gather it is new for machine learning.
+
+I am not sure that the approach is completely sound, however. I did not understand how
+"future" entries in the log are valid if the algorithm has changed. For example say I
+change the algorithm to only recommend dark haired people. This means that from that point
+forward, real events would only ever have accepts or rejects of dark haired people, because the
+user would never be presented with anyone else. A played back stream however, will have events
+for all sorts of people, because the events are in response to a different set of recommendations.
+
+I think that problem is true in general: using log replay to test development only works well
+if the contents of the log are uncorrelated with the developmental changes.

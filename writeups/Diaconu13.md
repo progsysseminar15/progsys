@@ -129,3 +129,11 @@ I also noticed, that contrary to postgres, they did not have an explicit goal
 to keep data forever. It would be interesting to see why that was the case, and
 what it would take to add that support if they so wished.
 
+### Michael Andersen
+
+This paper presents an in-memory OLTP engine for SQL Server. It gains a bunch
+of performance by using good datastructures (like bw-tree) and by compiling
+parts of the queries into native code. In general I felt like the paper was
+a collection of good ideas that had in part been presented elsewhere. For example,
+after reading Postgres, and "Concurrency Control in Distributed Database Systems",
+nothing here seemed particularly surprising.

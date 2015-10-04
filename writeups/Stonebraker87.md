@@ -117,7 +117,7 @@ imply that there would need to be either a distributed lock or a distributed
 timestamp ordering mechanism to maintain consistency in the order of
 transactions.  I would like to see how other this and other log-based database
 systems have handled the question of ordering in a log when distributing a
-database. 
+database.
 
 ### K. Shankari
 #### Overview
@@ -140,4 +140,24 @@ time that it is written to the time that the next version is written. Should
 versioning be exposed or should it be under the covers?
 
 Comparing the compaction strategy with LFS, the primary difference is really in
-the B-tree index. 
+the B-tree index.
+
+### Michael Andersen
+
+The thing that struck me the most when reading this paper is how relevant this
+would all be today. Although I am not a database person in general, I am not
+aware of any databases that have persistent multiversioning (I know of ephemeral
+multiversioning for concurrency control). It might be a bad fit for OLTP, but there
+are workloads that would benefit from having permanent history, and being able to
+query the database as it was at a particular time.
+
+In particular such a capability is useful for reproducable analytics: if a given
+version of the database is used with different analysis algorithms, you know that
+the changes in the output are a result of the changes in the algorithm, not the
+underlying database. It can also be used to imbue a query with idempotency, as
+if a particular version is used, then the query can be repeated multiple times
+and return the same results.
+
+It is not clear to me why this storage mechanism was not used in the postgresql
+system that is well known today. It seems eminently feasible on today's hardware,
+but perhaps that was not always the case

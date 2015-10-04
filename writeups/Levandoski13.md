@@ -69,7 +69,7 @@ a higher layer. Also in the case of sequential access, how does a bwtree with
 all of its mechanisms compare to more traditional data structures?
 
 
-### Xinghao Pan 
+### Xinghao Pan
 Bw-Tree works by combining a number of techniques:
 - delta updates
 - log-structured store
@@ -128,3 +128,15 @@ to read - it looked like it required a fair amount of database knowledge. In
 particular, the use of latches to mean implicitly mean database indexes in a
 hardware oriented paper sort of annoyed me. While designing an circuit, a latch
 is a flipflop that is used to latch or persist the state of a transient input.
+
+### Michael Andersen
+
+I really enjoyed this paper. It focuses on a tree datastructure that allows large mutations using
+only very small locks, so small that they are implemented in hardware as Compare And Swap
+instructions. This is a cunning idea, and I think I will go back and look at latch-using data
+structures and see if I can borrow some of these techniques.
+
+I may have missed it, but I am not sure how the mapping table does not pose a problem for
+large bw-trees. Presumably it is difficult to have a map for all of the underlying pages,
+and keep it consistent without a latch? Unless the size of the map is known in advance, but
+generally that is not the case for a database that is growing.
