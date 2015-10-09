@@ -63,3 +63,17 @@ client and server (from the persepctive of an end user). My question is if there
 are additional constraints we could place on the learning of a value such that
 we could reduce the amount of coordination in Paxos, and use that primitive
 to build more complex logic (albeit not in the most straightforward way).
+
+### Ethan J. Jackson
+Again, the paper is somewhat fundamental so it's hard to look at it
+objectively.  In this review I'm going to discuss the Paxos algorithm
+generally, rather than the specific treatment of it in the Paxos made simple
+paper.  Personally, my first interaction with Paxos was through Zookeeper and
+the like -- off the shelf implementations which constrain the hard consensus
+algorithm within a very specific API for distributed locking and leader
+election.  What I didn't realize until I read the paper was how general Paxos
+is.  The fact that you can use it to build arbitrarily complex state machines
+with interesting fault tolerance characteristics.  One could even imagine a
+virtual machine built on top of the algorithm.  Of course performance would be
+awful.  At any rate, this algorithm is clearly a fundamental contribution of
+significant importance which will have impact into the indefinite future.

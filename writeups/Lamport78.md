@@ -52,3 +52,22 @@ very natural comparison to draw, because logical clocks really do implement
 "merge" -- clocks can only "grow". Of course, this is drastically simplified in
 a reliable network context with in-order delivery and a lack of failing nodes.
 Still, sharing monotonic state seems to be another progressive systems pattern.
+
+### Ethan J. Jackson
+
+I find it somewhat difficult to look at this paper with anything vaguely
+resembling a critical eye -- the contribution is so fundamental, and has become
+so ingrained in our modern view of distributed systems.  That said, it was
+particularly enjoyable to read through Lamport beautifully laying out concepts
+which now we, with benefit of hindsight, take to be obvious.  In particular the
+distinction between logical time and physical time are made beautifully clear
+as are the limitations of relying on logical time alone.
+
+Many of the open questions in this work are resolved in later Lamport writing,
+still, I list the most interesting ones here.  First, the logical clock time
+algorithm proposed doesn't adequately discuss operation in presence of
+failures.  Second, I'm generally distrustful of the discussion of wall clocks
+in the paper.  Assuming clocks behave as they should the analysis is clearly
+correct, but in practice clocks are difficult to sync and have all sorts of
+unpredictable failure modes.  For this reason, whether or not to use real
+clocks for timestampping in distributed systems is still an issue debated.
