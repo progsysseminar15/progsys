@@ -31,3 +31,24 @@ This paper discusses how to use time and clock to maintain the ordering of event
 
 My concern for the communication protocol used for logical clock is that it requires every process to keep broadcasting its activity to every other process, and if there is a network delay or node failure, then the whole system will halt for a very long time. So this solution is very hard to scale. Introducing physical clock has a similar scalability issue because as the number of nodes grows, it becomes more and more difficult to synchronize the clocks among all machines. Maybe for some operations, we can relax the ordering requirements as maintaining the order may not be as important.
 
+### Gabe Fierro
+
+This paper discusses issues of ordering of events in a distributed system,
+based around a synchronization of logical clocks. At a high level, Lamport's
+simple explanation of partial ordering of logical clocks and his derivation of
+a total ordering by sharing communication between processes is a very elegant
+idea. The paper does spend time on how to handle "anomalous events", but these
+are consequential to the main point of the paper. If processes are going to be
+communicating *anyway*, then they might as well communicate their notion of
+partial ordering to all other processes. This complete sharing of information
+means that there is essentially continual synchronization that guarantees that
+all processes execute the same instructions and in the same order (to the
+extent that its relevant, barring concurrent events).
+
+The first thing that struck me about the paper is how Lamport's broadcasting of
+logical timestamps to strictly increase the logical clocks of other processes
+reminds me of the lattices we examined in the Bloom^L paper. This feels like a
+very natural comparison to draw, because logical clocks really do implement
+"merge" -- clocks can only "grow". Of course, this is drastically simplified in
+a reliable network context with in-order delivery and a lack of failing nodes.
+Still, sharing monotonic state seems to be another progressive systems pattern.
