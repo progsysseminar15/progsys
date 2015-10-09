@@ -30,3 +30,10 @@ On second thought, however, this is not that uncommon; in particular, transactio
 Taken further, the shopping cart example we saw in Bloom pushes the complexity to the client.
 This begs the question of what the trade-offs are for placing the coordination at the different agents in the distributed system.
 Is there a way to understanding the complexity of coordination at each level?
+
+### Chenggang Wu
+
+This paper presents a consensus algorithm that ensures all servers in a distributed system to agree upon an operation to perform. Using the implementation idea given in section 3, this enforces all servers in the system to perform the same sequence of operations, which provides a fairly strong consistency guarantee. During the normal operation, the consensus is actually pretty easy to reach because the system elects a single distinguished proposer to propose an operation rather than letting everyone propose different operations. Moreover, the additional latency incurred by the coordination seems relatively small because Phase I of the consensus algorithm can be performed prior to the reception of client-specified commands.
+
+One question is that although the consensus algorithm guarantees all servers in the system to perform the same sequence of operations, it doesn’t seem to imply that the states between any two servers would be the same at every timestep because servers may execute commands at different speed rates. Also, it doesn’t seem that the servers in the section 3’s example are coordinating with each other to synchronize their progress. So does it imply that Paxos consensus algorithm only guarantees eventual consistency (especially for the example in section 3)?
+
