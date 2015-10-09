@@ -9,9 +9,9 @@ One question I am left with: Lamport states that Paxos is optimal when doing pha
 ### Xinghao Pan
 
 My understanding of the Paxos algorithm from this paper boils down to the following implication chain:
-1. an object is installed as version $n$ with value $v$ only if
-2. a majority of acceptors accept version $n$ with value $v$, only if
-3. a majority of acceptors agree that no lower-numbered version will be accepted AND the proposal is for version $n$ with value $v$ AND any highest-numbered version less than $n$ (if it exists) has value $v$.
+- an object is installed as version $n$ with value $v$ only if
+- a majority of acceptors accept version $n$ with value $v$, only if
+- a majority of acceptors agree that no lower-numbered version will be accepted AND the proposal is for version $n$ with value $v$ AND any highest-numbered version less than $n$ (if it exists) has value $v$.
 The algorithm does not appear straightforward to prove formally, but Lamport introduces a number of invariants that the algorithm maintains, which he then argues are sufficient for correctness.
 
 I have some doubts about the use of a distinguished proposer and learner.
