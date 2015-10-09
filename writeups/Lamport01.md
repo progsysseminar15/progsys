@@ -37,3 +37,29 @@ This paper presents a consensus algorithm that ensures all servers in a distribu
 
 One question is that although the consensus algorithm guarantees all servers in the system to perform the same sequence of operations, it doesn’t seem to imply that the states between any two servers would be the same at every timestep because servers may execute commands at different speed rates. Also, it doesn’t seem that the servers in the section 3’s example are coordinating with each other to synchronize their progress. So does it imply that Paxos consensus algorithm only guarantees eventual consistency (especially for the example in section 3)?
 
+
+### Gabe Fierro
+
+Lamport states that the Paxos algorithm is quite simple and straightforward,
+and falls necessarily out of the set of constraints that we would like to
+express for a distributed system agreeing on some value. These constraints
+maintain that: an acceptor can accept a proposal numbered $n$ if and only if it
+has not responded to a prepare request having a number greater than n (P1a in
+the paper) and if a proposal with value $v$ is chosen, then every
+higher-numbered proposal that is chosen has value $v$. While in "plain
+English", these are really ways to guarantee some sort of ordering in the
+system. These constraints basically state that the value $v$ needs to be
+consistent for proposals in any majority set, and acceptors can only consider
+proposals newer than the last agreed-upon value. Then the paper discusses how
+to learn these new values.
+
+As with the clock paper, there is a notion that information can only grow,
+which reduces the amount of coordination required by the algorithm because the
+limit of what can be considered by an acceptor is constrained by the last
+accepted value. I accept that the simpler definition of Paxos does not want
+to consider Byzantine failures; I think it is telling that Paxos is used
+nearly always for a distributed server consensus, and almost never between
+client and server (from the persepctive of an end user). My question is if there
+are additional constraints we could place on the learning of a value such that
+we could reduce the amount of coordination in Paxos, and use that primitive
+to build more complex logic (albeit not in the most straightforward way).
