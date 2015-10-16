@@ -1,7 +1,7 @@
-#A Comprehensive Study of Convergent and Commutative Replicated Data Types
+# A Comprehensive Study of Convergent and Commutative Replicated Data Types
 ## Marc Shapiro, Nuno Preguica, Carlos Baquero, Marek Zawirski
 
-###Xinghao Pan
+### Xinghao Pan
 The largest section (Section 3) was dedicated towards showing how simple CRDTs can be made complex and composed together for complicated operations.
 This begs the question of how far we can push the limits of CRDTs.
 What operations allow us to build new lattices from existing ones?
@@ -22,4 +22,9 @@ Edelweiss uses program analysis to identify when a tuple is long longer visible 
 The Edelweiss paper also reads more like a bag of tricks rather than a principled approach towards monotone garbage collection.
 It would be interesting to try to generalize Edelweiss to general ELEs / CRDTs.
 As a naive example, reference counting can be thought of as an increment/decrement counter, which the CRDT paper shows is monotone.
-Safe storage reclamation is also similar to tombstoning or the 2-phase approach of CRDTs.
+
+
+### Erik Krogen
+A great deal of information was presented in this paper. One of the main takeaways for me was that, to implement things in a CRDT manner, you have to think about them in a very unconventional manner. Yet, by building the right abstraction, you can hide the implementation oddities behind a reasonable interface (though interesting restrictions sometimes bleed through this abstraction). I was surprised with some of the structures they were able to build as a CRDT, e.g. the graph. 
+
+As I wondered after reading the Bloom paper, I am left with two questions: how easy would it be to build on top of these, and are there fundamental restrictions on what can be accomplished using CRDTs? They are able to present some structures as CRDTs that I would not have expected; can this be done for everything? When does it make more sense to synchronize and use more conventional structures than to use these more limited, more complex CRDTs, and vice-versa? 
