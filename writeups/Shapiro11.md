@@ -39,3 +39,9 @@ I am still reflecting on whether I like CRDTs, or eventual consistency in genera
 
 I also wonder whether the problem solved by CRDTs is too narrow. Replication is important—it allows for fault tolerance, reduces latencies in a distributed system, even allows for disconnected operation. However, it speaks only to a limited extent to parallel speedup, an important promise of distributed systems. I am left wondering how broad the class of problems that benefit from this approach is.
 
+### Chenggang Wu
+
+The motivation of this work is that in distributed systems, maintaining a global total order of operations is very costly, and can negatively affect scalability and performance. For some applications, maybe we do not need such a strong consistency guarantee in the first place. Therefore, a more practical and less expensive approach is to use mechanisms that only guarantee eventual consistency: A replica can perform an update without reaching a consensus with other replicas, and later on, the replicas talk to each other in the background and reconcile conflicting updates. By getting rid of online coordination overhead, we can achieve better performance, scalability, and availability. The paper uses convergent replicated data types (CRDT) for guaranteeing eventual consistency. These data types have mathematical properties to ensure that diverged versions of replicas can be safely reconciled. 
+
+One of the key contributions is that the paper shows how to build complex CRDTs (graphs, monotonic DAGs, and sequence) from simple ones (counters and registers). While in theory, using these sophisticated CRDTs can let us build a larger class of monotone programs, I am wondering if there are more concrete examples of applying these data types to distributed systems and some experimental evaluation of their usefulness.
+
