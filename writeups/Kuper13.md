@@ -27,3 +27,35 @@ In the world of parallel programming, non-determinism is often the enemy of prog
 
 I think ‘freezing’ in LVar is similar to the punctuations in streaming literature in the sense that intuitively, they both mark the end of some inputs. It would be good to investigate further about the differences in terms of their purpose.
 
+### Yifan Wu
+
+General comment: LVars/LVish seem to be a morphism of sort for monotonic operations in functional programming land. The use
+of event handlers for LVish reminds me of "reactive programming" (sprinkling buzz words!).
+
+The motivation of LVish from LVars is parallelism (and functionally implied negation/"data
+structures that can say no"), and one specific example used is unordered graph
+traversal.
+
+The almost-barrier like design for quiesce and freezing to ensure correctness seem like it still
+retains concurrency issues --- even if the values are eventually correct, throwing a lot of
+exceptions (e.g. freezing before quiesced) doesn't seem that great for running code.
+
+LVars and CRDT appeared to be very similar at first, but it appears that LVars:
+- require shared memory (and therefore not distributed computing, but for parallelism in the same
+  runtime)
+- guarantees determinism achieved by blocking read requests (threshold reads), and this paper relaxes it to quasi-determism (but still requires some form of blocking
+But it seems that they are [joining
+forces](https://www.cs.indiana.edu/~lkuper/papers/joining-wodet14.pdf)
+
+
+Question & Comments:
+- not sure what runParThenFreeze does to give the extra boost of niceties
+- it seems that LVars have very different goals as CRDTs --- it appears to be more for determinism,
+  and CRDTs are more for concurrency management. Are they the two sides of the same coin? Or is
+  there something else.
+- Bloom seem to rely on lattices and have it as the base of more complex data structures, does LVars
+  have a similar narrative?
+- I saw this on one of the authors'
+  [blog](http://composition.al/blog/2015/08/31/whats-the-difference-between-inflationary-and-monotonic-functions/)
+  about "inflationary" functions, I'd be interested in diving in to parse of the similarities and
+  differences and how they translate to concurrency/determinism behaviors
