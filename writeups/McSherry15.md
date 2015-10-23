@@ -17,3 +17,9 @@ diffs at each node, through some magic, you can make incremental updates to the
 input data without requiring full recomputation.  Again, this is just a guess
 as I really have no idea what he was saying.  I'll refrain from saying anything
 more to avoid the risk of sounding incoherent.
+
+### Chenggang Wu
+This paper presents a new computation model called differential dataflow. It generalizes both the incremental and prioritized computation models with the additional power of handling changing datasets. When the dataset is modified during the computation, traditional optimization strategy such as incremental computation has to completely restart from the beginning. Differential dataflow is able to reuse states corresponding to the parts of the graph that have not changed, and therefore manages to improve the performance by reducing the number of operations executed during the iterative computation.
+
+I think I get the overall idea of this computation model, but there are some details that make me confused. For example, in section 3.3, their differential computation approach uses partial ordering to define the deltaA11 as A11-(deltaA00+deltaA01+deltaA10). However, using the traditional total ordering approach, deltaA11 is defined to be A11-A10. Correlating the above two definition yields A10=(deltaA00+deltaA01+deltaA10)=A00+A01-A00+A10-A00, which implies that deltaA01=0. Since this is clearly not true, does it mean that the two definition of deltaA11 are different?
+
