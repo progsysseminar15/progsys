@@ -84,3 +84,11 @@ In contrast, Lamport clocks / vector clocks track physical causal time.
   * The concept of a frontier brings out the need to wait on earlier pointstamps. This is manifested as higher latency in the presence of micro-stragglers.
   Is this fundamental to all non-monotone operations? Are there ways to minimize latency (for example, by detecting the frontier at the key level) without too much need for coordination and communication?
 
+
+### Johann Schleier-Smith
+
+There are a few things that I really like about this paper. Whereas previous scalable processing frameworks such as MapReduce or Dryad supported only acyclic graphs, Naiad's cyclic computation graph allows for a richer and more general processing model. How much more general? I'm not sure how to measure it. The authors show an implementation of iterative machine learning algorithms, and I'm still thinking of examples that would not be lend themselves well to efficient implementation on the Naiad platform.
+
+The “pointstamp” concept introduced by Naiad is a novel notion of indexing a computation. To me it is rather appealing, as it is one answer to the question of how to define “spacetime” for computation. In Naiad's definition notions of space and time are both connected to the program specification. Time is measured according to an input epoch sequence, together with a vector of loop counters, that originate in the graph, whereas space is indexed along the nodes and edges of the computation graph. This seems to be a construction that is both clever and general. There are a number of rules that make this system work, but key among them is that nodes cannot send events backwards in time.
+
+Naiad presents a powerful approach, but its API is not one that is practical to program against directly. While the authors suggest SQL, MapReduce, and graph processing abstractions, these seem to capture only a limited amount of Naiad's flexibility and capability. What is really the best way to program for timely dataflow?

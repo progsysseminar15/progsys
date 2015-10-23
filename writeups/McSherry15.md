@@ -69,3 +69,10 @@ some portion of a value. I think if we consider the input to be an array, this m
 Then, they can use the partial reordering of differences to reduce the number of computations
 that need to be done, and gives a notion of dependence between steps. I think this helps
 with new versions of data. it'd be nice to get some more information
+
+
+### Johann Schleier-Smith
+
+Differential dataflow presents a compelling and general vision, perhaps one that attempts to address some of the challenges of writing efficient and general programs using Naiad's timely dataflow abstraction. In contrast to incremental computation, which requires total order, differential computation provides an additional reference route, one indexed by a partial order. I love the potential for gains in efficiency, but must admit that I haven't really yet figured out how to program it. The blog post provides a simple example, involving updating vectors, and even that seems both complicated and error-prone.
+
+My concern with differential dataflow largely mirrors that with timely dataflow. How do we make it practical for people to program to this runtime? What are the right abstractions for programmers to interface with, ones that maintain power and performance but also make it easy to achieve correctness and to reason about our program?
