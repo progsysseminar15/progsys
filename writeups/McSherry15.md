@@ -45,3 +45,27 @@ The separation of progress into multiple dimensions is a simple but powerful ext
 
 In general, I think we can think of progressive systems as differential dataflows, with facts / updates accumulated over (partially ordered) time.
 Is this a useful representation? Does it buy us any expressive power or computational advantages?
+
+### Gabe Fierro
+
+I hope people aren't put off by the Rust in the blog post, but it really is
+incidental to the main ideas here; there's nothing Rust-specific here.
+Differential dataflow, the idea that he's implementing here, uses a graph
+concept: vertices as the points of computation and edges as the direction of
+data between them. Each node stores the history of differences computed there,
+which enables efficient updates of data. At the best case, you can either tell
+that a computation does not need to be re-run in the face of new input or a new
+input value to the first node might only involve computation at the last node
+(or a handful of inbetween nodes).
+
+There's the same augmented logical timestamps we see in Naiad, and seem much more
+like versions of data here. This blog post doesn't go into much detail, but I think
+that in order to support the necessary decomposition of a process into a sequence
+of differences, you need similar guarantees to the monotonicity, associativity and
+communativity for lattices. It does need some process that allows differencing across
+an arbitrary partial order rather than a sequence. So, it seems like there is some
+reordering that can happen in terms of how differences are applied? It does this for
+some portion of a value. I think if we consider the input to be an array, this makes sense.
+Then, they can use the partial reordering of differences to reduce the number of computations
+that need to be done, and gives a notion of dependence between steps. I think this helps
+with new versions of data. it'd be nice to get some more information
