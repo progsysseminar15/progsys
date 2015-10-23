@@ -39,7 +39,9 @@ I would be intersted to figure out if there is a (algebraic) property that captu
 At the very least, the 'sum' of deltas must be commutative, associative, and have an inverse.
 
 The separation of progress into multiple dimensions is a simple but powerful extension of linear progress of incremental dataflows, and seems vaguely related to some of the papers we've read.
+
 1. In Lamport clocks / vector clocks, we saw that time and causality are only partially ordered.
 2. The CALM-Bloom / CRDT work has replicas making separate progress before merging into an eventually consistent system, similar to how differences are summed together in differential dataflows.
+
 In general, I think we can think of progressive systems as differential dataflows, with facts / updates accumulated over (partially ordered) time.
 Is this a useful representation? Does it buy us any expressive power or computational advantages?
