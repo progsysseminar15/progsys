@@ -23,3 +23,23 @@ This paper presents a new computation model called differential dataflow. It gen
 
 I think I get the overall idea of this computation model, but there are some details that make me confused. For example, in section 3.3, their differential computation approach uses partial ordering to define the deltaA11 as A11-(deltaA00+deltaA01+deltaA10). However, using the traditional total ordering approach, deltaA11 is defined to be A11-A10. Correlating the above two definition yields A10=(deltaA00+deltaA01+deltaA10)=A00+A01-A00+A10-A00, which implies that deltaA01=0. Since this is clearly not true, does it mean that the two definition of deltaA11 are different?
 
+### Xinghao Pan
+
+Differential dataflow is a generalization of incremental dataflows to partial orders of updates, which are retained for potential future computations.
+A use-case which they are particularly interested in is incremental updates to iterative computations.
+This is expressed as a two-dimensional lattice corresponding to rounds of input and iterations of the computational loop.
+Previous rounds and iterations can be re-used for computing new differences and state.
+
+Both the blog post and the paper were not exactly clear on how this computational re-use can be done in general.
+The computational advantage seems to be very dependent on whether there are computationally efficient ways to accumulate or compute differences.
+Otherwise computations could become increasingly expensive, since each state requires summing and differencing larger sets of updates.
+
+The paper appears to acknowledge this issue (Section 3.4), but argues that "many specific operators have more efficient implementations".
+I would be intersted to figure out if there is a (algebraic) property that captures what differential dataflows can be efficiently compute.
+At the very least, the 'sum' of deltas must be commutative, associative, and have an inverse.
+
+The separation of progress into multiple dimensions is a simple but powerful extension of linear progress of incremental dataflows, and seems vaguely related to some of the papers we've read.
+1. In Lamport clocks / vector clocks, we saw that time and causality are only partially ordered.
+2. The CALM-Bloom / CRDT work has replicas making separate progress before merging into an eventually consistent system, similar to how differences are summed together in differential dataflows.
+In general, I think we can think of progressive systems as differential dataflows, with facts / updates accumulated over (partially ordered) time.
+Is this a useful representation? Does it buy us any expressive power or computational advantages?
