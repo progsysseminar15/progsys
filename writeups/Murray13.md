@@ -23,3 +23,10 @@ most systems.  Clearly, they've built a working system which has some
 impressive numbers, but it's not clear to me whether their timestamping
 algorithm is the key enabler of their results, or an incidental detail.  It
 certainly seems to make the system somewhat more difficult to reason about.
+
+
+### Erik Krogen
+Naiad has some interesting ideas about combining a batch and streaming approach via the use of alerts that mark when all data for a certain period has been receieved, allowing coordination/finalization of data processing. Yet by allowing vertices to continue working on other data and not requiring communication in the general case, they maintain a low latency route. The concept of pointstamps (timestamp + location) is used to determine whether or not a particular datum can possibly flow to a given vertex through some clever use of data sharing, though this does still require broadcasted communication across the system.
+
+They say that 'stateful dataflow vertices' are 'needed to execute iterative and incremental computations with low latency'. Is this fundamental? Spark achieves pretty low latency in a non-stateful manner. Stateless dataflow vertices are generally much easier to reason about (at least from a system point of view) and easier to provide fault tolerance for; is there a fundamental performance tradeoff with this? 
+
