@@ -35,3 +35,31 @@ This paper presents Naiad, a distributed system for parallel data processing. Th
 
 Actually I am not sure if I fully understand how the vector timestamp works to determine whether a batch operation is safe to execute. Hopefully, after tomorrow’s discussion it will become clearer.
 
+### Gabe Fierro
+
+Naiad is a distributed system that implements a parallelized dataflow
+computation model called "timely dataflow" which aims to support low-latency
+streaming while minimizing the amount of coordination between nodes. There is
+also a lot of focus on supporting cyclic operations; this, combined with the
+partitioning function, makes it feel like an abstraction over map-reduce.  They
+place special logical timestamps on the edges between vertices (for of course
+this is all modeled as a graph because its dataflow) and ensure that data never
+flows "backwards". They then leave it up to the computation runnning how much
+coordination it requires, either processing more incoming values, or sending
+output values out to other vertices. With the use of the timestamps and the
+knowledge of the graph layout, they can avoid some unnecessary coordination
+that occures when the agents need to find out what they need to coordinate.
+Having time flow forward and being able to reason about flow with partitioning
+and known graphs means that those types of coordinations don't need to be done
+(or at least to a lesser degree).
+
+Some of the progressive-system flavors are here again. Garbage collection I
+thin kis in the form of the 'checkpoint' and 'restore' interfaces. On periodic
+checkpoints, the system will flush queues, and the system can recover from a
+failed process by restoring from a checkpoint. I understand that Naiad is
+faster to a degree because it sidesteps coordination among a large number of
+nodes and knows where things *should* be. In the batching cases that are highly
+parallel (e.g. wordcount) and are traditional map-reduce, I wonder if Naiad
+does produce a performance increase. Its not clear that their performance gains
+there are due to the timely dataflow or rather due to a well-engineered system
+that follows a normal map-reduce computation pattern.
