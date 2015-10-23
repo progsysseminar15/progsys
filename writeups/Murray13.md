@@ -63,3 +63,24 @@ parallel (e.g. wordcount) and are traditional map-reduce, I wonder if Naiad
 does produce a performance increase. Its not clear that their performance gains
 there are due to the timely dataflow or rather due to a well-engineered system
 that follows a normal map-reduce computation pattern.
+
+
+### Xinghao
+
+
+Naiad is a high throughput, low latency distributed system for iterative, incremental computations, and is supported by the "timely dataflow" computation model.
+As I understand it, timely dataflow converts nested looping into dataflow structures, by essentially tagging messages with logical timestamps that indicate the stage of the computation.
+
+A few thoughts and comments:
+
+1. Timely dataflows makes more explicit that even feedback / looping are 'progressive', i.e. only move forward in time, and contrasts with previous systems that either do not support iterations or provide weak consistency guarantees.
+In practice, I don't see how this is much different from batch iterative systems which unroll the nested loops.
+If differential dataflows are taken out of Naiad, it is pretty similar to Spark / DryadLINQ with pipelining enabled.
+  * On a related note, I suspect that much of Naiad's performance comes from differential dataflows, which interestingly were not given much attention in this paper.
+2. The authors argue that OnNotify, which is a non-monotone computation that requires coordination, may be useful, for example, if a single value is sent.
+  * To be fair, Edelweiss-Bloom introduced single-value punctuations, which can arguably be shown to be monotone.
+3. The pointstamping system is a mechanism to simulate logical causal time by exploiting information in the computation graph structure.
+In contrast, Lamport clocks / vector clocks track physical causal time.
+  * The concept of a frontier brings out the need to wait on earlier pointstamps. This is manifested as higher latency in the presence of micro-stragglers.
+  Is this fundamental to all non-monotone operations? Are there ways to minimize latency (for example, by detecting the frontier at the key level) without too much need for coordination and communication?
+
