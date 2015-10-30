@@ -28,3 +28,23 @@ This paper introduces Volcano as well as the design and implementation to parall
 
 The paper has lots of implementation details and is pretty dry. There doesn’t seem to be many resources on the internet either. Their only examples shown in Figure 1 helps a bit in terms of understanding, but I still prefer a more concrete query example and a visualization of the query-tree as well as processes that are responsible for the different portions of the query-tree.
 
+### Gabe Fierro
+
+This paper looks at how to parallelize a tree-based query plan for dataflow,
+using a system called Volcano. There is a lot of time spent on establishing the
+notion of a node, which is the unit of abstraction for operators. An iterator
+model connects each of the nodes. The exchange operator in the Volcano system
+allows us to parallelize these operators without having to change those
+operators to be aware of parallelism. The system supports three types of parallelism:
+vertical parallelism (pipelining between processes), horizontal parallelism (bushy: two
+subtrees are handled by different processes), horizontal parallelism (intra-operator:
+partition the operator across multiple processes).
+
+There's a bunch of systems stuff in this paper on how to actuallly do this in
+a real system, which was nice to read. The iterator interface feels like
+a progressive system, but its unclear how much other coordination is needed.
+Intra-operator parallelism is what the Flux paper does, so I hope the discussion
+delves into what aspects of Flux and volcano are similar in solving similar
+problems. Flux does use a variation of the exchange operator, but introduces a global
+coordinator to coordinate all the highly-available, fault-tolerant stuff. I wonder
+if the larger Volcano system accounts for similar features.
