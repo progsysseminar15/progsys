@@ -33,3 +33,10 @@ Questions
 bottleneck?
 - Again I'm curious how much overlap existing popular systems have with the old system --- the
 terminology is different and I cannot seem to wrap my head around the underlying design.
+
+### Chenggang Wu
+
+This paper addresses how to achieve high availability and fault-tolerant for streaming dataflow workloads. The paper starts from investigating how to achieve the above goals for single-site dataflow, and then moves on to the complicated case where the dataflow is parallelized across multiple partitions. The solution to single-site dataflow is to use dataflow pairs where we have a primary site and a replicated secondary site. In case the primary site fails, the secondary site can take over. However, this approach cannot be naively extended to the parallel dataflow because without proper coordination between partitions during the exchange phase, simply restoring the state of a failed partition using its associated replicated partition will cause consistency issues for the entire primary dataflow. The paper then solves this issue by proposing Flux. Flux uses an acknowledgement-based coordination protocol across primary and secondary cluster pairs to ensure that the recovery phase only need to fix the failed primary partition instead of restoring the entire primary dataflow. This essentially reduces the granularity of recovery to a partition-level and therefore improves MTTF for parallel dataflows.
+
+I wonder when we build the partition pairs, do we have to have two sets of distinct partitions (one set as primary, and the other as secondary)? Can we make one partition a primary partition of certain operators and at the same time a secondary partition of some other operators? Also, I am curious if there is a simpler way to coordinate replicas of individual operator partitions that achieves the same effect as Flux.
+

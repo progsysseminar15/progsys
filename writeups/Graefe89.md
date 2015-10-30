@@ -21,3 +21,10 @@ be a factor also; it doesn't seem to me that the system/query planner is able to
 the abstraction is so clean. I also wonder what the interaction of "exchange" and I/O partitioning scheme is.
 In general it would be great to go over the "design space" of data-flows. For example, I found it hard to compare
 Volcano with Naiad.
+
+### Chenggang Wu
+
+This paper introduces Volcano as well as the design and implementation to parallelize Volcano. In general, Volcano uses a conventional file system that includes a module for device, buffer, file, and B+-tree management. Within a process, it uses iterator that support open-next-close protocol to implement demand-driven dataflow. In multi-process scenario, the exchange operator is responsible for parallel execution and synchronization. Vertical parallelism pipelines the query evaluation between processes. Horizontal parallelism has two forms: bushy parallelism and intra-operator parallelism. In the first case, different CPU execute different sub-trees of a query tree, whereas in the second case, CPUs perform the same operation on different subsets of the data. The paper also discusses the change required in the file system to support the parallelization, comparison with GAMMA, and performance of Volcano under the multi-processer setting.
+
+The paper has lots of implementation details and is pretty dry. There doesn’t seem to be many resources on the internet either. Their only examples shown in Figure 1 helps a bit in terms of understanding, but I still prefer a more concrete query example and a visualization of the query-tree as well as processes that are responsible for the different portions of the query-tree.
+
