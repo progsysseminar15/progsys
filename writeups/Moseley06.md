@@ -53,3 +53,18 @@ The authors spend a great deal of time analyzing the antithesis of elegance and 
 In their analysis of complexity, the authors identify *essential complexity* and *accidental complexity*, distinguishing between the two in terms of the user's problem. Importantly, essential complexity involves what is observable about the system, namely its input and outputs. This means that control flow becomes entirely a matter of accidental complexity, whereas some aspects of state are essential complexity, and others may be accidental complexity. That there is not essential control was a new recognition to me. Furthermore, though the authors do not put in these terms, we can deduce that the essential state of the system is completely specified by a log of its inputs. I wonder whether coupling the notion of time with the notion of essential state may make the concept even more powerful, perhaps by providing a bridge to the notion of control.
 
 In speaking to implementation, the authors propose a Functional Relational Programming (FRP) style. The relational model allows capturing of essential state in its purest form, while the functional approach helps to manage the accidental complexity, which though not essential to the problem is nonetheless necessary for providing a practical solution. There is a lot to like about these ideas, and I wonder what more we have learned in nine years since the publishing of this paper, what views have been reinforced, what views have been undermined, and what is keeping us from realizing a world with mostly elegant software.
+
+### Gabe Fierro
+
+This paper concerns itself with with mitigating the complexity that comes with reasoning about large software systems. The paper
+argues that much of this complexity is not inherent to the problem, and instead comes from managing state and control flow
+in the programming models. The paper evaluates the problems with state and control flow across OOP, logic and functional
+programming models, and then introduces a new programming model -- functional relational programming -- along with a generic
+construction for systems that aims to minimize the amount of mutable state. By minimizing mutable state and having a clear
+direction of data flow, it becomes possible to reason about how a system will behave and whether or not a system is correct.
+
+What's so interesting about this paper is that it uses many of the same techniques and structures as some of
+the other progressive systems we've looked at, but for the purposes of static analysis and formal reasoning and correctness,
+rather than performance. I wonder how the implementation of an FRP system actually performs. The focus of FRP also seems
+to be on "business logic", which is debatably limited. I wonder how FRP might work for "systems" systems like databases,
+middleware, etc
