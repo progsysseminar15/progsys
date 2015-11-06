@@ -30,7 +30,7 @@ This paper first provides an exact semantics for general-purpose declarative con
 
 I am interested in knowing more about how performant CQL is. For now, it seems that the query plan generator is fairly simple and uses hard-coded heuristics to generate query plans. It would be interesting to investigate possible performance optimization opportunities under this abstraction.
 
-=======
+
 ### Gabe Fierro
 
 This paper defines the CQL language for defining continuous queries over streams and relations. The paper makes a point
@@ -51,4 +51,14 @@ streams as a set of "diffs" over time: this is the Istream operator. Because the
 are well-defined, it becomes possible to statically reason about what queries are monotonic and which aren't. The ability
 to reason about how a system will behave is a feature shared by the Out of the Tar Pit system, which also uses the idea
 that data is either derived or unchanging. Likewise, CQL has both base and derive streams and relations.
->>>>>>> 4cd520f... gabe writeup arasu04
+
+
+### Johann Schleier-Smith
+
+TO me the highlight of CQL is it user-friendly approach. It stays close to familiar SQL, restricting stream-to-stream operations, which instead are expressed as a sequence of operations: stream-to-relation → relation-to-relation → relation-to-stream. This not only allows the implementation to take advantage of well established relational know-how, but also stays with concepts familiar to users. The authors do a good job of addressing potential objections, showing how carefully designed defaults allow concise expression of most common queries. I also found it interesting that relations and relational operators can be expressed as stream and stream operators, and I wonder whether the converse is true.
+
+Windows provide the connection between streams and relations, and so are central to CQL. *Now* and *Unbounded* seem to be particularly common window specifications, though CQL also provides tuple-based and time-based ranges. I wonder, though, whether these window specifications are really the right way to get a handle on time. In particular, I feel that the windowing specification should be responsive to what is happening in the data, for example by recognizing user sessions.
+
+This paper also provides a number of practical implementation notes. One design choice that I appreciated was the encapsulation of system functions and streaming functions, together with relational operators, in an extended operation set. This allows a uniform high-level description, a plan including materialization and network io alongside relational processing.
+
+My sense is that CQL inherits many of the strengths and weaknesses of SQL. It successfully adapts the relational model to streaming data, but it doesn't go that far beyond it. For simple queries this is fine, but I continue to wish for greater code re-use and more manageable ways of expressing complex programs.
