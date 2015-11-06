@@ -23,3 +23,9 @@ With freezing, epochs, and heartbeats, there was a need to stop or quiesce the s
 However, there is an alternative that we saw in the Bloom^L shopping cart -- under the right conditions, it is possible to allow a punctuation to be received prior to some inputs.
 Understanding and quantifying the pros and cons of each approach could lead us to developing better ways to mark progress in a progressive system.
 
+### Chenggang Wu
+
+This paper first provides an exact semantics for general-purpose declarative continuous queries over streams and relations. Specifically, the semantics is based on formal definitions for stream and relations, mappings among them, and relational query language. Then, it proposes CQL, a language that instantiates the black box in the abstract semantics using SQL as the relational query language and window specifications derived from SQL-99. The paper also compares CQL with other languages for continuous queries over streams and relations, and shows that CQL is more expressive than other languages.
+
+I am interested in knowing more about how performant CQL is. For now, it seems that the query plan generator is fairly simple and uses hard-coded heuristics to generate query plans. It would be interesting to investigate possible performance optimization opportunities under this abstraction.
+

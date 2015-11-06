@@ -23,3 +23,10 @@ As an example, monotone logic is supported by (monotone) Bloom.
 Similarly, progressive systems (with potentially non-monotone operations) can be supported by a language like CQL.
 It would be interesting to figure out what classes of logic we can efficiency express and execute.
 (Since we argue that *all* systems can be thought of as progressive systems evolving over time, are there other interesting classes of programs between monotone and Turing-complete?)
+
+### Chenggang Wu
+
+The paper states at the beginning that complexity is the major difficulty in developing large-scale software systems. Then it summarizes the causes of complexity, which include (mutable) states, controls, and code volume (depend on the state and control). It analyzed three types of programming models, namely object-oriented programming, functional programming, and logic programming, and analyzed the complexity of these models based on the three causes and their trade-offs. In the second half of the paper, it proposes functional relational programming model, which cleanly separates essential state, essential logic, and accidental states and controls. The paper appraises this programming model that it achieves low complexity by minimizing the three causes.
+
+I am interested in the trade-off between complexity and performance. It seems that the paper advocates the elimination of accidental states to reduce the complexity of the program. However, to improve the performance, it might be a good idea to add some accidental states and controls. Is there a way to simultaneously achieve high performance and low complexity?
+
