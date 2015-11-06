@@ -24,6 +24,19 @@ Similarly, progressive systems (with potentially non-monotone operations) can be
 It would be interesting to figure out what classes of logic we can efficiency express and execute.
 (Since we argue that *all* systems can be thought of as progressive systems evolving over time, are there other interesting classes of programs between monotone and Turing-complete?)
 
+### Ethan J. Jackson
+
+Ah, this brings me back to my days at CMU where we spent ours pontificating on
+the joys of functional programming.  I generally agree with the premise of the
+paper -- simplicity is a good thing, and to the extent we can avoid state and
+unnecessary control flow we win.  That said, my practical experience makes me
+somewhat sceptical of these sorts of arguments.   Watching an army of engineers
+at an unnamed large tech company struggle with, and ultimately fail to grock
+and ultimately reject Datalog has made me think that there's more to it then
+theoretical cleanliness. Fundamentally, people thing in terms of state that's
+acted on procedurally.  Moving them away from that is a problem of psychology
+not computer science.
+
 ### Chenggang Wu
 
 The paper states at the beginning that complexity is the major difficulty in developing large-scale software systems. Then it summarizes the causes of complexity, which include (mutable) states, controls, and code volume (depend on the state and control). It analyzed three types of programming models, namely object-oriented programming, functional programming, and logic programming, and analyzed the complexity of these models based on the three causes and their trade-offs. In the second half of the paper, it proposes functional relational programming model, which cleanly separates essential state, essential logic, and accidental states and controls. The paper appraises this programming model that it achieves low complexity by minimizing the three causes.
