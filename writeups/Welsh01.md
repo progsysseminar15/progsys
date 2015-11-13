@@ -55,3 +55,23 @@ SEDA also looks very much like some of the later data flow papers that we have r
 I wonder if the converse is true, that is, are all data flows also representable as event models?
 If so, could we implement data flows in SEDA, and what performance advantages might we get?
 If not, what types of data flows are not event models, and what makes them special?
+
+###  Ethan J. Jackson
+This paper reminds me a lot of click in a lot of ways.  They're both
+essentially stream processing systems, one operating on packets and one
+operating on requests.  Also, both use a processing graph of independent stages
+to increase code reuse and modularity.  While this is a fairly common point in
+the design space, its efficacy depends a lot on the details of the system
+you're running.  For packet processing, as data rates increased, the cost of
+CPU cache misses between threads, and synchronization overhead on the queues
+has largely made the approach unworkable.  That said, the NFV movement has
+forgotten this lesson and is soldiering on with a similar architecture, though
+with a VM at each stage this time.
+
+All and all, I think this architecture didn't win as it sits in a midpoint
+between two more useful extremes.  Most web servers don't actually need to
+perform very well as they sit behind many layers of caches and CDNs.  For
+those, the pre-forked apache architecture is the easiest for developers to
+maintain and reason about.  On the other end, for high performance HTTP proxies
+and various other middleboxes, the performance hit of the architecture is too
+great making it not viable.
