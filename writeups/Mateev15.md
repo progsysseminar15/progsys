@@ -16,3 +16,19 @@ Why do we not apply and evaluate standard concurrency control mechanisms in this
 
 In the same context, it may be possible to use weaker isolation levels (e.g. RAMP) for some applications.
 Write-write conflicts may also be resolved if updates are monotone (CALM).
+
+### Ethan J. Jackson
+This is very cool, though I'm not really sure what to say about it.  In a
+modern high-performance switching architecture, RCU is really the only workable
+concurrency method as it supports reads without locks.  The fact that we can
+now have very efficient writes as well is pretty huge deal.  I suspect as this
+filters through systems, we're going to see significant increases in
+performance and functionality for those features requiring multi-threaded
+writes.
+
+From the perspective of this class, this paper is really just a monotone
+data-structure with coordination for garbage collection.  The semantics of read
+are "give me any element of the set of object versions", and the semantics of a
+write are "add this version to this set".  Taken together this is monotone, and
+therefore eventually consistent.  The epochs, viewed from this light, are
+simply a mechanism to coordinate so that garbage collection is possible.
