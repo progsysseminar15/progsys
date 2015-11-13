@@ -34,3 +34,12 @@ tradeoff is faced by RLU.
 - The performance gain seems very marginal (though the code does look simpler) --- is this a
   fundamental improvement or just a library that makes writing better code easier?
 - I don't see how this paper is related to SEDA
+
+
+### Johann Schleier-Smith
+
+The well-established RCU mechanism provides a concurrency primitive allowing non-blocking reads on diverse data structures. It accomplished this at some cost to writes, which must wait until previously started readers have finished before completing their work. Despite its ubiquity, RCU can pose challenges for programmers, requiring them to create copies of modified objects and to manage detailed pointer updates. RLU relieves the programmer of these burdens by implementing something akin to software transactional memory.
+
+I haven't yet fully understood how updates are reflected in the write log, how the *get_actual* and *get_copy* operations are implemented, but I understand that they encapsulate the logic for maintaining different versions of the state. The *rlu_synchronize* operation then finds a safe time to apply these changes, which is after any previously started reads have completed. RLU uses a global clock, incremented when entering a lock, to give order to operations.
+
+RLU seems to be strictly better than RCU. Perhaps it is more complicated, but it makes life easier for programmers and exhibits excellent performance. I am curious to understand its limitations. It provides limited support for managing conflicts between writers, and I wonder how this shortcoming might be addressed, whether for example one could RLU to allow concurrent modifications to different parts of a tree data structure. Such extensions could allow the approach to apply to more problems, or potentially even to distributed systems where latency becomes an important factor.

@@ -75,3 +75,12 @@ those, the pre-forked apache architecture is the easiest for developers to
 maintain and reason about.  On the other end, for high performance HTTP proxies
 and various other middleboxes, the performance hit of the architecture is too
 great making it not viable.
+
+
+### Johann Schleier-Smith
+
+SEDA describes relatively early work toward providing good performance under load, focusing on the challenges of scalable internet services. This is a challenge that I can appreciate, and the point is probably best made by comparing the throughput curve in Figure 2 to that in Figure 4. We see that even as concurrency goes up, system throughput stays flat. Latency must go up,  as we reach the system capacity constraint, but we the system continues to do useful work at a constant rate. This is an important operational characteristic, for when throughput degrades under load a service becomes difficult to manage reliably.
+
+This architecture described in this paper consists of a series of processing stages linked by queues. Where possible, it avoids thread pools, instead operating in an event loop style. This is a pretty reasonable approach, though I would have liked to see a deeper discussion of the tradeoffs between threading and event processing (memory requirements, overhead involved in switching tasks, relation to CPU architecture). Also, I have seen both threaded and event loop systems exhibit degraded throughput under load, and I would have liked to see more on how to configure queues so to avoid such degradation. One strategy that works is to give higher priority to tasks deeper in the pipeline, and to reject requests at the source when we know that the system will be unable to complete them within acceptable time bounds.
+
+Today, many most production systems continue rely heavily on threaded models. With appropriate admissions policies (connection limits) one can keep them in the regime of good throughput. Asynchronous event loops are important for connection multiplexing ([C10K problem](http://www.kegel.com/c10k.html)), but I don't see them broadly displacing threaded execution models, which provide both greater ease of programming, and often better performance as well.
