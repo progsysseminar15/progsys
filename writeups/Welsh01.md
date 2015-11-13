@@ -37,3 +37,21 @@ drive to expose challenging concurrency issues to the application developer.
 - It seems that Apache Webserver is still the most popular (50%+), and it's mostly multiple
 thread/process without notions of events (I might be wrong!), and I'm wondering why SEDA hasn't
 "won" given all the benefits it seems to have.
+
+
+### Xinghao Pan
+SEDA is a staged event driven architecture that attempts to deliver the higher performance of event-driven designs while providing a easy programming and debugging interface.
+A SEDA design is composed of event stages, each with its own event queue and controllers.
+Event stages explicitly separate core application logic from thread management and scheduling.
+Resource controllers manage resources of each stage, shielding programmer from the complexity of performance turning (reminds me of FRP model from Out of the Tar Pit).
+There is an explicit control boundary between stages, constraining threads to a given stage
+
+It was unclear what the difference is between SEDA and structured event queues of section 2.4, or whether SEDA is a general implementation of structured event queues. Hopefully the discussion will make this clearer to me.
+
+The authors made an interesting comment in the conclusion that "in traditional event-driven design it is much more difficult to trace the flow of events through the system", whereas in SEDA message-oriented communication between stages establishes explicit orderings.
+The ease of programming is attributable to the *explicit ordering*; this, however, may be achieved without SEDA, by having events events carry around timestamped traces of their passage through the system. SEDA encodes the ordering naturally, but is not the only means to capture ordering.
+
+SEDA also looks very much like some of the later data flow papers that we have read, if we think of events as data flowing through the system.
+I wonder if the converse is true, that is, are all data flows also representable as event models?
+If so, could we implement data flows in SEDA, and what performance advantages might we get?
+If not, what types of data flows are not event models, and what makes them special?
