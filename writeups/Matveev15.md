@@ -19,3 +19,18 @@ a separate process). What is interesting is that they do discover that making co
 is the slow part and limits the efficacy of the data structure in certain situations. I'm curious about the effect
 of data structure size on the RW throughput, and also how well this would perform as an on-disk data structure
 (or perhaps as an interface to one).
+
+### Yifan Wu
+
+RLU addresses key issues of RCU by making it possible to have reads with multple writes going on,
+and semi-automating the process. It avoid RCU's limit of only one update at a time with its
+per-thread object-level write-log. The update is amortized by lazy evaluation of conflict.
+
+Questions:
+- Would be great to give on overview of the "design space" of concurrency on the thread level; it seems related to
+the database world of concurrency (MVCC) but with a completely new set of terms... It's unclear to me what
+tradeoff is faced by RLU.
+- I'm not sure how RCUs are being used by programmers --- why does it have to be complicated?
+- The performance gain seems very marginal (though the code does look simpler) --- is this a
+  fundamental improvement or just a library that makes writing better code easier?
+- I don't see how this paper is related to SEDA
