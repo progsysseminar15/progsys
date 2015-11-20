@@ -12,3 +12,21 @@ The paper presents explicit token store (ETS), a simplified approach to dataflow
 
 Since the addressing capability is restrictive, I wonder how this would affect the architecture. The paper claims that this is fine as there is exactly one instruction executed for each action on the dataflow graph, but will there be other potential side-effects? Also, I am curious if there are systems today that inherit the idea behind ETS.
 
+### Xinghao Pan
+
+(The following review was written with little understanding of hardware / processors or historical context.
+In particular, I found the introduction difficult to understand, and it was only later in the paper that I started to understand and gain some bits of appreciation of the problem.) 
+
+This paper addresses the complexity faced by dataflow architectures, which the authors argue are due to implicit token store and matching.
+The proposed alternative is to make the token store explicit:
+upon invocation of a function, an activation frame is explicitly allocated.
+The activation frame is explicitly referenced by each token, so that mapping is immediate.
+Monsoon is a multiprocessor that incorporates an ETS.
+
+The description of Monsoon's parallelism sounds similar to that of Volcano's horizontal and vertical parallelism.
+Non-interfering operators can be assigned to different processing units (horizontal) and pipelining is used within each processing unit (vertical).
+
+Another passing comment in the paper that struck me was: "... by using dataflow graphs as a programming methodology, we are guaranteed that all execution schedules produce the same result", which sounds like CALM monotonicity / determinism yet again, in a different context.
+My understanding of the statement is that, as long as things flow forward (progressive), we can achieve deterministic outcomes without coordination.
+
+Dataflow processors seemed like a good idea. Were there any reasons that they did not work out? If so, are there lessons we should learn from when developing our own progressive systems?
