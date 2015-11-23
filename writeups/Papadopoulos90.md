@@ -30,3 +30,12 @@ Another passing comment in the paper that struck me was: "... by using dataflow 
 My understanding of the statement is that, as long as things flow forward (progressive), we can achieve deterministic outcomes without coordination.
 
 Dataflow processors seemed like a good idea. Were there any reasons that they did not work out? If so, are there lessons we should learn from when developing our own progressive systems?
+
+
+### Johann Schleier-Smith
+
+The promise of dataflow architectures is a compelling one. The model for the computer, rather than being limited to the step-wise operations of the Von Neumann architecture, allows for parallel execution whenever the inputs of an operator are ready. Monsoon differs from previous dataflow architectures, which also serve as targets for the *Id* programming language, is that the compiler makes explicit the intermediate states that the processor must maintain during program operation. The work of defining these *activation frames*, which provide storage for matching in-flight operations, those for which input operands remain outstanding, is taken on by the compiler, ahead-of-time, rather than in hardware during execution. Instead of hash lookups, the hardware needs only deal with linear offsets. This makes sense to me, as does any change that helps keep the lower layers simple.
+
+I found elements of the discussion of the explicit token store (ETS) architecture at the end of Section 2 particularly interesting. The authors note that by ignoring presents bits, the execution model reduces to that of multiple imperative control threads. At the same time, by adjusting the state transitions, they implement a variety of dataflow primitives. To me, this indicates that the hardware described offers a great deal of flexibility, that it presents a powerful element for managing concurrency.
+
+One thing I continue to wonder about is whether some of the principles of Monsoon could be applied to dataflow processing at a higher level. The activation frame and explicit token store architecture that the authors describe in a hardware realization might also be attractive for a software dataflow system. Perhaps operations and inputs would be at a coarser level of granularity, but the notion of triggering an execution when all of the bits are ready is a compelling one. In practice, such a system would also require attention to further distributed systems concerns, such as failure handling, but I am curious to explore whether the core ideas might translate.
