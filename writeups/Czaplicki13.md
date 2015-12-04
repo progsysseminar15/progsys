@@ -29,3 +29,24 @@ This paper discusses Elm, a FRP language that helps easily create responsive GUI
 
 It seems to me that declaring a node as “async” only make sense if the destination node has multiple edges connecting to it. At a high level, declaring a node as “async” let the destination node retrieve the current (unchanged) value of the async node instead of waiting for the value that’s currently being computed. However, I think all of these async and ordering issues exist because the paper’s design decision that every source node produces one value for each event regardless of whether the event is relevant to the node. As a comparison, in rx.js if the event is not relevant to the node, no values are fired, and therefore rx does not seem to be bothered with async and ordering issue. To provide equivalent functionality, RX.CombineLatest does very similar job as declaring a node as “async” in Elm, and RX.Zip also does very similar job as NOT declaring a node as “async” in Elm. So I wonder if the async and ordering issues are fundamental for FRP.
 
+### Gabe Fierro
+
+Elm is an FRP language with asynchronous support that aims to be well-suited for developing GUIs: this includes the graphical layout
+of an application as well as the logic behind the UI. One of the core principles in ELM is the notion of a "signal",
+which is a value that changes over time. Instead of using wall-time ticks, Elm's notion of time comes from the progression
+of events that occur when program input changes. This is very closely tied to the FRP notion that new "state" only comes
+from the outside. Signals, which are represented as nodes in a DAG, are connected by means of function definitions, which are
+just a thinly hiddden `map` and `reduce`.
+
+At first, Elm seemed limited in its abilities; I wasn't sure that the relational model was able to capture all of the
+intricacies and positioning usually required in modern web applications, but then it occured to me that much of modern
+web programming can be thought of as a dataflow. The problem that Elm purports to solve -- that of asynchronously combining
+multiple long running actions and using them as a trigger for other actions -- is addressed at least in part by Promises,
+which were released in 2014, after the ELM paper. Events occur in the real world, which then trigger actions in a UI, and
+that user-input state propoagates through the GUI. FRP seems like a nice fit for this.
+
+I liked the trick with making asynchronous actions "synchronous" by having them emit dummy signal states when events
+actually occur. This preserves the pipelined semantics of the DAG. The paper does not go into much detail on the runtime
+for enabling this operation though. I believe they mention that their initial implementation was slow, but recent
+benchmarks have shown elm to be much faster than similar JS frameworks such as React and Angular. I wonder what
+they did in their compiler/runtime to make that work, and how proressive it looks.
