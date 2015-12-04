@@ -1,4 +1,4 @@
-Progressive: what did we say we liked at the beginning?
+## Progressive: what did we say we liked at the beginning?
 * Elegant.  Shankari: "observation exists, analysis is implied, and can be wrong"
 * Natural world inherently progressive (Johann channeling Lamport)
 * CALM: can have distributed consistency without coordination if everything is monotonic (i.e. progressive)
@@ -6,7 +6,7 @@ Progressive: what did we say we liked at the beginning?
 * Replay: consistent, reproducible experimentation, debugging, deployment (recall Antelope, see Shankari's quote above)
 * History can be interesting in its own right (recall Postgres): point-in-time queries, trend analysis
 
-Recurring Themes:
+## Recurring Themes:
 * Implementation often has non-progressive/mutable somewhere in the stack.
 * Try to localize the non-monotonicity somewhere cheap.  Think of CAS in Bw-Tree
 * Garbage collection and reorg
@@ -26,7 +26,7 @@ Recurring Themes:
   * Another: Fail if you "witness" something frozen that turns out to change (LVish)
 
 
-Similarities between
+## There are similarities between
 * progressive event handling (Lamport, SEDA, Elm)
 * progressive dataflow (Naiad, Diff Dataflow, Volcano, Flux), and
 * progressive data update (MVCC, LFS, Postgres, Bw-Tree, Monsoon, Tardis, LVars).
@@ -36,12 +36,28 @@ Similarities between
   * Can separate API and Architecture.
     * Exchange operator (Volcano): takes one relationship between control & data flow (the tight coupling of the 2 by iterators) and make it the API for a different relationship (the async push/pull/queue combos of shuffling data across a network)
 
-Recuring Desire: Taxonomy/Map of "progressive" design patterns
-  * Catalog ways to maximize progressiveness, and make non-progressive stuff free/fast/local. 
-  * Maybe even teach a compiler to choose these things!
-  * Protocol synthesis.
-  * What level of history are we reasoning about?
+## Recuring Desire: Taxonomy/Map of "progressive" design patterns
+* Catalog ways to maximize progressiveness, and make non-progressive stuff free/fast/local. 
+* Maybe even teach a compiler to choose these things!
+* Protocol synthesis.
+* What level of history are we reasoning about?
     * I/Os?
     * Lattice operations?
     * Logic?
     * Application semantics?  etc.
+
+## Going forward
+* Where are the biggest opportunities for Progressive Systems design to have impact over next 5 years?  
+  * Biggest potential wins? (maximizing benefit of going progressive)
+  * Most natural applications of the ideas? (minimizing cost of going progressive)
+* Achilles heels?
+  * Weaknesses
+  * Competing approaches, including "good enough" solutions
+* How to keep your system progressive?
+  * Design patterns?
+  * Language constructs (CRDTs, LVars)
+  * Languages?
+    * Functional Reactive? (LVars, Elm, Frenetic)
+    * Logical?  (Datalog, Bloom, Tarpit)
+    * DSLs: Embedded or standalone?
+*  
