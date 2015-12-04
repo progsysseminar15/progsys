@@ -22,3 +22,10 @@ This begs the question of whether we could have used a dataflow language instead
 I found the management of asynchronous signals to be a rather clever yet natural trick which could possibly be applied to other dataflow-like programs.
 Adding an async node to the DAG breaks the DAG into subgraphs so that synchronization order is maintained within the subgraphs but not between them.
 Each async node produces no-ops until the corresponding async event returns, upon which it generates a new signal. (See Figure 8.)
+
+### Chenggang Wu
+
+This paper discusses Elm, a FRP language that helps easily create responsive GUIs. The two major features of Elm are that it supports asynchronous FRP and purely functional graphical layout. The paper argues that asynchronous FRP allows the programmer to specify when the global ordering of event can be violated, and therefore enables efficient concurrent execution of FRP programs.
+
+It seems to me that declaring a node as “async” only make sense if the destination node has multiple edges connecting to it. At a high level, declaring a node as “async” let the destination node retrieve the current (unchanged) value of the async node instead of waiting for the value that’s currently being computed. However, I think all of these async and ordering issues exist because the paper’s design decision that every source node produces one value for each event regardless of whether the event is relevant to the node. As a comparison, in rx.js if the event is not relevant to the node, no values are fired, and therefore rx does not seem to be bothered with async and ordering issue. To provide equivalent functionality, RX.CombineLatest does very similar job as declaring a node as “async” in Elm, and RX.Zip also does very similar job as NOT declaring a node as “async” in Elm. So I wonder if the async and ordering issues are fundamental for FRP.
+
