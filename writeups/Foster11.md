@@ -11,6 +11,13 @@ Another interesting design decision is that of adopting a centralized view of th
 
 I was pleasantly surprised to see that Frenetic provides good performance, comparable to hand-written NOX, perhaps because the authors provided programmers with good ways of reasoning about it. It's also nice to see that the authors implemented a broad cross-section of useful network management functions, so demonstrating that Frenetic can meet practical demands.
 
+### Erik Krogen
+
+This seems to be an excellent example of a situation where a declarative language makes a ton of sense for expressing your program. The example programs look very intuitive, and are able to very concisely represent complex interactions. I am not familiar with network programming, but their description of the normal pitfalls of attempting to compose different rules on plain NOX sounded absolutely terrible - Frenetic seems to be an enormous improvement over this. The idea of Frenetic reacting to changes in the network instead of setting timeouts on rules to just let them expire when they're no longer needed is great as well, and seems to be much more intuitive as well as more performant in some cases. 
+
+The only concern I had when reading the paper was one of performance, so I was pleasantly surprised and impressed to see their performance results being very competitive with hand-tuned NOX programs. I think they did an excellent job of the trade-off between expressiveness and ease of understanding the cost of your programs; I was thinking initially that it would probably be very easy to accidentally write a program that is very prohibitively expensive, but it seems that due to the design of the language this scenario should be readily apparent to the programmer.
+
+Overall I am very impressed with this and it seems they have done an excellent job of providing a clean abstraction on top of a difficult-to-use low level system, but it will be interesting to hear a perspective from someone who actually does network programming.
 
 ### Xinghao Pan
 

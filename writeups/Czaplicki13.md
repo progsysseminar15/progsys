@@ -23,6 +23,12 @@ I found the management of asynchronous signals to be a rather clever yet natural
 Adding an async node to the DAG breaks the DAG into subgraphs so that synchronization order is maintained within the subgraphs but not between them.
 Each async node produces no-ops until the corresponding async event returns, upon which it generates a new signal. (See Figure 8.)
 
+### Erik Krogen
+
+I'm not very familiar with FRP or web GUI creation in general, so it's hard for me to say how natural Elm feels as a way to program. Composing graphical elements through their functional language seemed unintuitive to me, and although it was concise for their examples it seems that creating a complex GUI in that manner would be difficult - but this may just be because I'm not very comfortable with functional languages. Reacting to events instead of constantly recomputing seems obvious to me (especially since JavaScript is inherently an event driven language), and I'm kind of surprised that this was a new development over previous approaches. I feel the same way about the asynchronous computations - JavaScript is normally an asynchronous language, so it seems reasonable that you would be able to specify asychronous computation. It may just be because FRP is relatively young (I think?) so things are still sort of figuring themselves out - the async nodes certainly do add another level of complexity.
+
+While they argue that Elm's GUI creation "can represent quite complex interactions with a small amount of code", I am not entirely sure that I buy their claim. I do like how concisely you can represent some things that are nontrivial in plain JavaScript (e.g. all of Figure 13). I am curious to know if any full web applications have been written in Elm, and would be interested to see how the code looks for a full production web app. I do think that the GUI creation and event handling system seem to integrate very nicely, which is definitely a plus. All in all the FRP paradigm seems to be an effective layer on top of JavaScript and Elm seems to provide a model that is more expressive and capable than what else is currently available. 
+
 ### Chenggang Wu
 
 This paper discusses Elm, a FRP language that helps easily create responsive GUIs. The two major features of Elm are that it supports asynchronous FRP and purely functional graphical layout. The paper argues that asynchronous FRP allows the programmer to specify when the global ordering of event can be violated, and therefore enables efficient concurrent execution of FRP programs.
